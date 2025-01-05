@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using BackEnd.Models;
+using BackEnd.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
-namespace BackEnd.DBContext;
+namespace BackEnd.DataBase.Context;
 
 public partial class VideoHubDbContext : DbContext
 {
@@ -43,9 +43,6 @@ public partial class VideoHubDbContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("cam_ip")
                 .UseCollation("utf8mb4_general_ci");
-            entity.Property(e => e.CamName)
-                .HasMaxLength(50)
-                .HasColumnName("cam_name");
             entity.Property(e => e.CamType)
                 .HasMaxLength(45)
                 .HasColumnName("cam_type");
@@ -108,6 +105,9 @@ public partial class VideoHubDbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("usr_password")
                 .UseCollation("utf8mb4_general_ci");
+            entity.Property(e => e.UsrRole)
+                .HasMaxLength(45)
+                .HasColumnName("usr_role");
         });
 
         OnModelCreatingPartial(modelBuilder);

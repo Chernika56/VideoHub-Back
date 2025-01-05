@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BackEnd.Models;
+namespace BackEnd.DataBase.Entities;
 
 public partial class M2mCameraUser
 {

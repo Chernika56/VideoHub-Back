@@ -1,0 +1,11 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;User=root;Password=Chernika_56;Database=videohub;"
+  },
+  "MySQLVersion": "9.0.1-mysql",
+  "JwtParameters": {
+    "Key": "SuperSecureKeyForJWTThatIsLongEnoughForHS256Encryption32bytes",
+    "Audience": "Audience",
+    "Issuer": "Issuer"
+  }
+}

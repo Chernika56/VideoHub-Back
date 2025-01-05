@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BackEnd.Models;
+namespace BackEnd.DataBase.Entities;
 
 public partial class User
 {
@@ -9,11 +9,13 @@ public partial class User
 
     public string? UsrName { get; set; }
 
-    public string? UsrLogin { get; set; }
+    public string UsrLogin { get; set; } = null!;
 
-    public string? UsrPassword { get; set; }
+    public string UsrPassword { get; set; } = null!;
 
     public string? UsrEmail { get; set; }
+
+    public string UsrRole { get; set; }
 
     public virtual ICollection<M2mCameraUser> M2mCameraUsers { get; set; } = new List<M2mCameraUser>();
 }

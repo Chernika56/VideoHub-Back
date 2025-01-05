@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BackEnd.Models;
+namespace BackEnd.DataBase.Entities;
 
 public partial class Camera
 {
@@ -14,8 +14,6 @@ public partial class Camera
     public int? CamArchiveTime { get; set; }
 
     public string? CamIp { get; set; }
-
-    public string? CamName { get; set; }
 
     public virtual ICollection<M2mCameraUser> M2mCameraUsers { get; set; } = new List<M2mCameraUser>();
 }
