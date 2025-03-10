@@ -1,8 +1,7 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;User=root;Password=Chernika_56;Database=videohub;"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=fluss;Username=root;Password=root"
   },
-  "MySQLVersion": "9.0.1-mysql",
   "JwtParameters": {
     "Key": "SuperSecureKeyForJWTThatIsLongEnoughForHS256Encryption32bytes",
     "Audience": "Audience",

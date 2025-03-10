@@ -1,4 +1,5 @@
 using BackEnd.DataBase.Context;
+using BackEnd.Tables.Context;
 using BackEnd.Users.Endpoints;
 using BackEnd.Users.Services;
 using BackEnd.Utils.Policies;
@@ -19,16 +20,15 @@ builder.Configuration.AddJsonFile("appparams.json");
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowVueApp", builder =>
-        builder.WithOrigins("http://localhost:5173")
+    options.AddPolicy("AllowNuxt", builder =>
+        builder.WithOrigins("http://localhost:3000")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
-var mySqlVersion = builder.Configuration.GetValue<string>("MySQLVersion");
-builder.Services.AddDbContext<VideoHubDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.Parse(mySqlVersion)));
+builder.Services.AddDbContext<MyDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -107,7 +107,7 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowVueApp");
+app.UseCors("AllowNuxt");
 app.UseAuthentication();
 app.UseAuthorization();
 
