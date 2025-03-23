@@ -6,7 +6,7 @@
 
         public uint CameraId { get; set; }
 
-        public CamerasEntity Camera { get; set; } = null!;
+        public virtual CamerasEntity Camera { get; set; } = null!;
 
 
         public string Source { get; set; } = null!;

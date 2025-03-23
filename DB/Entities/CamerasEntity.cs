@@ -6,36 +6,43 @@ namespace BackEnd.DB.Entities
     {
         public uint Id { get; set; }
 
+        public string Name { get; set; } = null!; // сделать первичным ключом
+
         public uint FolderId { get; set; }
         // folder_coordinates
 
         public uint PresetId { get; set; }
         // all
 
-        public uint AgentId { get; set; }
+        // public uint AgentId { get; set; }
         // agent_id, agent_key, agent_model, agent_serial, agent_status
 
         public uint StreamerId { get; set; }
         // public string? DVRPath { get; set; } // из streamers
 
-        public FoldersEntity Folder { get; set; } = null!;
+        public virtual FoldersEntity Folder { get; set; } = null!;
 
-        public PresetsEntity Preset { get; set; } = null!;
+        public virtual PresetsEntity Preset { get; set; } = null!;
 
-        public AgentsEntity Agent { get; set; } = null!;
+        // public virtual AgentsEntity Agent { get; set; } = null!;
 
-        public StreamersEntity Streamer { get; set; } = null!;
+        public virtual StreamersEntity Streamer { get; set; } = null!;
 
-        public ICollection<EventsEntity>? Events { get; set; } = new List<EventsEntity>();
+        public virtual ICollection<EventsEntity>? Events { get; set; } = new List<EventsEntity>();
 
-        public ICollection<M2mMosaicsCamerasEntity>? M2mMosaicsCameras { get; set; } = new List<M2mMosaicsCamerasEntity>();
+        public virtual ICollection<M2mMosaicsCamerasEntity>? M2mMosaicsCameras { get; set; } = new List<M2mMosaicsCamerasEntity>();
 
 
-        public string Name { get; set; } = null!;
+        public uint OrganizationId { get; set; }
 
-        public string Comment { get; set; } = "";
+        public virtual ICollection<M2mUsersCamerasEntity> M2MUsersCameras { get; set; } = new List<M2mUsersCamerasEntity>();
 
-        public string? Coordinates { get; set; } = "";
+
+        
+
+        public string Comment { get; set; } = null!;
+
+        public string? Coordinates { get; set; } = null!;
 
         public bool Enabled { get; set; }
 
@@ -45,7 +52,7 @@ namespace BackEnd.DB.Entities
 
         public uint? DVRSpace { get; set; } // (Пространство DVR) ГБ // первично из presets потом может изменится
 
-        public bool? HasActions { get; set; }
+        // public bool? HasActions { get; set; }
 
         // lastChange???
 
@@ -55,7 +62,7 @@ namespace BackEnd.DB.Entities
 
         public string? OnvifProfile { get; set; }
 
-        public bool? OnvifRTZ { get; set; }
+        public bool? OnvifPTZ { get; set; }
 
         public string? OnvifURL { get; set; }
 
@@ -75,51 +82,51 @@ namespace BackEnd.DB.Entities
         //permissions
 
         //playback_config
-        public string Token { get; set; } = null!;
+        //public string Token { get; set; } = null!;
         //playback_config
 
         public string? PostalAddress { get; set; }
 
-        public uint PreciseThumbnailsDays { get; set; }
+        // public uint PreciseThumbnailsDays { get; set; }
 
-        public string? Server { get; set; }
+        // public string? Server { get; set; }
 
-        public bool? Static { get; set; }
+        // public bool? Static { get; set; }
 
-        //stream_status
-        public string Stream_Name { get; set; } = null!;
+        ////stream_status
+        //public string Stream_Name { get; set; } = null!;
 
-        public string? Stream_Server { get; set; }
+        //public string? Stream_Server { get; set; }
 
-        public bool? Alive { get; set; }
+        //public bool? Alive { get; set; }
 
-        public uint? Lifetime { get; set; }
+        //public uint? Lifetime { get; set; }
 
-        public uint Bitrate { get; set; }
+        //public uint Bitrate { get; set; }
 
-        public uint SourceError { get; set; }
+        //public uint SourceError { get; set; }
 
-        public uint HttpPort { get; set; }
+        //public uint HttpPort { get; set; }
 
-        public uint HttpsPort { get; set; }
-        //stream_status
+        //public uint HttpsPort { get; set; }
+        ////stream_status
 
         public string StreamUrl { get; set; } = null!;
 
-        public string? SubStreamUtl { get; set; }
+        public string? SubStreamUrl { get; set; }
 
-        public bool? Thumbnails { get; set; }
+        //public bool? Thumbnails { get; set; }
 
-        public string? ThumbnailsUrl { get; set; }
+        //public string? ThumbnailsUrl { get; set; }
 
         public string Title { get; set; } = null!;
 
-        //user_attributes
-        public bool? Favorite { get; set; }
+        ////user_attributes
+        //public bool? Favorite { get; set; }
 
-        public bool? MotionAlarm { get; set; }
-        //user_attributes
+        //public bool? MotionAlarm { get; set; }
+        ////user_attributes
 
-        public bool? VideoOnly { get; set; }
+        // public bool? VideoOnly { get; set; }
     }
 }

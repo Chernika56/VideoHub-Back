@@ -1,60 +1,67 @@
-﻿using BackEnd.Users.DTO;
+﻿using BackEnd.Organizations.DTO.RequestDTO;
+using BackEnd.Organizations.Services;
+using BackEnd.Users.DTO.RequestDTO;
 using BackEnd.Users.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using BackEnd.Utils.Policies;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Users.Endpoints
 { 
     public static class UserEndpoints
     {
-        public static void MapUser(this IEndpointRouteBuilder builder)
+        public static void MapUsers(this IEndpointRouteBuilder builder)
         {
-            builder.MapPost("/login", UserAuthentication)
+            builder.MapGet("/", GetUsers)
                 .WithOpenApi();
-            builder.MapPost("/registration", RegisterUser)
+            builder.MapGet("/{userId:uint}", GetUser)
+                .WithOpenApi();
+            builder.MapPost("/", CreateUser)
+                .WithOpenApi();
+            builder.MapPut("/{userId:uint}", ChangeUser)
+                .WithOpenApi();
+            builder.MapDelete("/{userId:uint}", DeleteUser)
                 .WithOpenApi();
         }
 
-        private async static Task<IResult> UserAuthentication(HttpContext context, [FromServices] UserService service, [FromBody] AuthenticationDTO dto)
-        {   
-            var token = await service.AuthenticationUser(dto);
+        [Authorize(Policy = PolicyType.AdministratorPolicy)]
+        private static async Task<IResult> GetUsers([FromServices] UserService service)
+        {
+            var users = await service.GetUsers();
 
-            if (token != null)
-            {
-                context.Response.Cookies.Append("jwtToken", token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None
-                });
-                return Results.Ok();
-            }
-            else
-            {
-                return Results.BadRequest();
-            }
+            return users is null ? Results.StatusCode(StatusCodes.Status500InternalServerError) : Results.Ok(users);
         }
 
-        private async static Task<IResult> RegisterUser(HttpContext context, [FromServices] UserService service, [FromBody] RegistrationDTO dto)
+        [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
+        private static async Task<IResult> GetUser([FromServices] UserService service, uint userId)
         {
-            var token = await service.RegisterUser(dto);
+            var user = await service.GetUser(userId);
 
-            if (token != null)
-            {
-                context.Response.Cookies.Append("jwtToken", token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None
-                });
-                return Results.Ok();
-            }
-            else
-            {
-                return Results.BadRequest();
-            }
+            return user is null ? Results.StatusCode(StatusCodes.Status500InternalServerError) : Results.Ok(user);
+        }
+
+        [Authorize(Policy = PolicyType.AdministratorPolicy)]
+        private static async Task<IResult> CreateUser([FromServices] UserService service, [FromBody] CreateUserDTO dto)
+        {
+            var user = await service.CreateUser(dto);
+
+            return user is null ? Results.StatusCode(StatusCodes.Status500InternalServerError) : Results.Ok(user);
+        }
+
+        [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
+        private static async Task<IResult> ChangeUser([FromServices] UserService service, [FromBody] UserRequestDTO dto, uint userId)
+        {
+            var user = await service.ChangeUser(dto, userId);
+
+            return user is null ? Results.StatusCode(StatusCodes.Status500InternalServerError) : Results.Ok(user);
+        }
+
+        [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
+        private static async Task<IResult> DeleteUser([FromServices] UserService service, uint userId)
+        {
+            var res = await service.DeleteUser(userId);
+
+            return res is null ? Results.StatusCode(StatusCodes.Status500InternalServerError) : Results.StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

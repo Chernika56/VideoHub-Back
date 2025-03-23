@@ -1,8 +1,11 @@
-﻿namespace BackEnd.Utils.Policies
+﻿using System.CodeDom;
+
+namespace BackEnd.Utils.Policies
 {
     public static class PolicyType
     {
-        public const string AdministratorPolicy = "Administrator";
-        public const string RegularUserPolicy = "RegularUser";
+        public const string AdministratorPolicy = "Admin";
+        public const string UserPolicy = "User";
+        public const string OrganizationAdminPolicy = "OrganizationAdmin";
     }
 }

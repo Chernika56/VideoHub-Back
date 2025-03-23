@@ -1,10 +1,22 @@
-using BackEnd.DataBase.Context;
-using BackEnd.Tables.Context;
+using BackEnd.Authorization.Endpoints;
+using BackEnd.Authorization.Services;
+using BackEnd.Cameras.Endpoints;
+using BackEnd.Cameras.Services;
+using BackEnd.DB.Context;
+using BackEnd.Folders.Endpoints;
+using BackEnd.Folders.Services;
+using BackEnd.Messages.Endpoints;
+using BackEnd.Messages.Services;
+using BackEnd.Mosaics.Endpoints;
+using BackEnd.Mosaics.Services;
+using BackEnd.Organizations.Enpoints;
+using BackEnd.Organizations.Services;
+using BackEnd.Presets.Endpoints;
+using BackEnd.Presets.Services;
 using BackEnd.Users.Endpoints;
 using BackEnd.Users.Services;
 using BackEnd.Utils.Policies;
 using BackEnd.Utils.Roles;
-using BackEnd.Video.Endpoints;
 using BackEnd.Video.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +71,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -87,10 +100,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<VideoService>();
-
-
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(PolicyType.AdministratorPolicy, policy =>
@@ -98,12 +107,33 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim(ClaimTypes.Role, RoleType.Administrator);
     }
     );
-    options.AddPolicy(PolicyType.RegularUserPolicy, policy =>
+    options.AddPolicy(PolicyType.UserPolicy, policy =>
     {
         policy.RequireClaim(ClaimTypes.Role, RoleType.AllRoles);
     }
     );
+    options.AddPolicy(PolicyType.OrganizationAdminPolicy, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, RoleType.Administrators);
+    }
+    );
 });
+
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<VideoService>();
+builder.Services.AddScoped<CameraService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AuthHelper>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<MosaicsService>();
+builder.Services.AddScoped<PresetService>();
+builder.Services.AddScoped<OrganizationService>();
+builder.Services.AddScoped<OrganizationUsersService>();
+builder.Services.AddScoped<OrganizationFoldersService>();
+builder.Services.AddScoped<OrganizationFolderUserService>();
+builder.Services.AddScoped<FolderService>();
+builder.Services.AddScoped<MessageService>();
 
 var app = builder.Build();
 
@@ -120,9 +150,37 @@ if (app.Environment.IsDevelopment())
 }
 
 var globalGroup = app.MapGroup("/api/v1.0");
-globalGroup.MapGroup(@"/user").MapUser();
-globalGroup.MapGroup(@"/video").MapVideo();
+globalGroup.MapGroup(@"/users").MapUsers();
+globalGroup.MapGroup(@"/profile").MapProfile();
+globalGroup.MapGroup(@"/cameras").MapCameras();
+globalGroup.MapGroup(@"/auth").MapAuth();
+globalGroup.MapGroup(@"/mosaics").MapMosaics();
+globalGroup.MapGroup(@"/presets").MapPresets();
+globalGroup.MapGroup(@"/folders").MapFolders();
+globalGroup.MapGroup(@"/messages").MapMessages();
+
+var organizationsGroup = globalGroup.MapGroup("/organizations");
+organizationsGroup.MapOrganizations();
+organizationsGroup.MapOrganizationUsers();
+organizationsGroup.MapOrganizationFolders();
+organizationsGroup.MapOrganizationFolderUsers();
 
 app.UseHttpsRedirection();
 
 app.Run();
+
+
+// сначала фронт получает от бэка токен(playback_config.token), этот токен свой для каждого аккаунта, то есть хранится в БД
+// этот токен добавляется в конец ссылки на поток `${this.host}/${s.name}/preview.jpg?token=${token}`
+// видео плейер идет по этой ссылке, с токеном на сервер Flussonic, он видя токен проверяет, открыта ли сессия с помощью session_id
+// session_id = hash(name(потока) + ip(клиента) + token). Flussonic хранит???
+// если session_id нету, то отправляет запрос /play на мой сервер, а мой сервер должен дать 200(ОК)
+
+
+// мне на сервере нужно сделать: генерацию playback_config.token для каждого юзера
+// обработку запроса /play - session_id наверное сохранять в БД, возвращать 200, если token совпал, можно посчитать сколько потоков юзер смотрит
+
+// не просто /folders ,а /organizations/id/folders
+
+// session - сессионный ключ, отправляется с каждым запросом, apiKey - ключ для авторизации в vsaas.io ...
+

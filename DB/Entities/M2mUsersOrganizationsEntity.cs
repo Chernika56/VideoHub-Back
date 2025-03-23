@@ -16,15 +16,17 @@
         // permissions
         public bool IsMember { get; set; } // default = false
 
-        public bool CanViewStats { get; set; } // default = false
+        public bool IsAdmin { get; set; } 
 
-        public bool CanEditCameras { get; set; } // default = false
+        //public bool CanViewStats { get; set; } // default = false
 
-        public bool CanEditUsers { get; set; } // default = false
+        //public bool CanEditCameras { get; set; } // default = false
 
-        public bool CanViewPersonList { get; set; } // default = false
+        //public bool CanEditUsers { get; set; } // default = false
 
-        public bool CanEditPersonList { get; set; } // default = false
+        //public bool CanViewPersonList { get; set; } // default = false
+
+        //public bool CanEditPersonList { get; set; } // default = false
         // permissions
 
     }

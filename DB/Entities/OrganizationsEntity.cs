@@ -13,12 +13,16 @@
         public virtual ICollection<MosaicsEntity>? Mosaics { get; set; } = new List<MosaicsEntity>();
 
 
+        public virtual ICollection<CamerasEntity> Cameras { get; set; } = new List<CamerasEntity>();
+
+
+        // нужно сделать триггеры, которые будут обновлять, или если я управляю бд только через сервер, то сделать это на строне сервера
         // stats
-        public uint UserCount { get; set; } // ???  сделать автоматичекий подсчет, если нужно
+        public uint UserCount { get; set; } // сделать триггер при добавлении записи в M2mUsersOrganizations
 
-        public uint CameraCount { get; set; } // ???  сделать автоматичекий подсчет, если нужно
+        public uint CameraCount { get; set; } // сделать триггер при добавлении записи в Cameras 
 
-        public uint MosaicCount { get; set; } // ??? сделать автоматичекий подсчет, если нужно
+        public uint MosaicCount { get; set; } // сделать триггер при добавлении записи в Mosaics
         // stats
 
 
@@ -30,6 +34,6 @@
 
         public bool IsDefault { get; set; } // falault = true
 
-        public uint? OwnerId { get; set; }
+        public uint OwnerId { get; set; }
     }
 }

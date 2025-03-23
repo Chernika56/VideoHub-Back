@@ -6,9 +6,9 @@ namespace BackEnd.DB.Entities
     {
         public uint Id { get; set; }
 
-        public string Login { get; set; } = null!;
+        public string Login { get; set; } = null!; // сделать просто уникальным или мб вторичным ключом или типо того
 
-        public string? Name { get; set; }
+        public string? Name { get; set; } 
 
         public string Password { get; set; } = null!;
 
@@ -19,10 +19,13 @@ namespace BackEnd.DB.Entities
         public virtual ICollection<M2mUsersFoldersEntity>? M2mUsersFolders { get; set; } = new List<M2mUsersFoldersEntity>();
 
 
-        public string? ApiKey { get; set; } // ????
+        // public string? ApiKey { get; set; } // ????
 
-        public string? Session { get; set; } // ????
+        // public string? Session { get; set; } // ????
 
+        //playback_config
+        public string Token { get; set; } = null!;
+        //playback_config
 
         public string? Phone { get; set; }
 
@@ -31,23 +34,23 @@ namespace BackEnd.DB.Entities
         public uint? MaxSessions { get; set; }
 
         // admin
-        public bool Readonly { get; set; } // default = false
+        //public bool Readonly { get; set; } // default = false
 
         public bool Disabled { get; set; } // default = false
         // admin
 
-        public string? AccessLevel { get; set; }
+        public string AccessLevel { get; set; } = null!;
 
 
-        public bool IsAdmin { get; set; } // default = false
+        //public bool IsAdmin { get; set; } // default = false
 
         public bool IsLoggedIn { get; set; } // default = false
 
-        public bool CanViewOrganizations { get; set; } // default = false
+        //public bool CanViewOrganizations { get; set; } // default = false
 
-        public bool CanEditOrganizations { get; set; } // default = false
+        //public bool CanEditOrganizations { get; set; } // default = false
 
-        public bool IsOrganizationsAdmin { get; set; } // default = false
+        //public bool IsOrganizationsAdmin { get; set; } // default = false
 
 
         // Settings???

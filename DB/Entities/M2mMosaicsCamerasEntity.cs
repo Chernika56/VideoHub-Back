@@ -8,8 +8,8 @@
 
         public uint CameraId { get; set; }
 
-        public MosaicsEntity Mosaic { get; set; } = null!;
+        public virtual MosaicsEntity Mosaic { get; set; } = null!;
 
-        public CamerasEntity Camera { get; set; } = null!;
+        public virtual CamerasEntity Camera { get; set; } = null!;
     }
 }

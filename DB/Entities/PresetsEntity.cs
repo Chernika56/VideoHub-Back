@@ -6,12 +6,12 @@
 
         public string Title { get; set; } = null!;
 
-        public ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
+        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
 
 
-        public float? DVRDepth { get; set; }
+        public float DVRDepth { get; set; }
 
-        public uint? DVRLockDays { get; set; }
+        public uint DVRLockDays { get; set; }
 
         public uint? DVRSpace { get; set; }
 

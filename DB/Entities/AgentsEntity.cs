@@ -4,7 +4,7 @@
     {
         public uint Id { get; set; }
 
-        public ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
+        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
 
 
         public string? Key { get; set; }

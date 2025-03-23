@@ -13,16 +13,18 @@
         public virtual FoldersEntity Folder { get; set; } = null!;
 
 
-        // permissions
-        public bool CanView { get; set; } // default = false
+        public bool CanView { get; set; }
 
-        public bool CanViewDVR { get; set; } // default = false
+        //// permissions
+        //public bool CanView { get; set; } // default = false
 
-        public uint? DVRDepthLimit { get; set; } 
+        //public bool CanViewDVR { get; set; } // default = false
 
-        public bool? CanUsePTZ { get; set; } // default = false
+        //public uint? DVRDepthLimit { get; set; } 
 
-        public bool? CanUseActions { get; set; } // default = false
-        // permissions
+        //public bool? CanUsePTZ { get; set; } // default = false
+
+        //public bool? CanUseActions { get; set; } // default = false
+        //// permissions
     }
 }

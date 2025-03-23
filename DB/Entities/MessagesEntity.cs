@@ -7,7 +7,7 @@
 
         public string? Title { get; set; }
 
-        public string? Body { get; set; }
+        public string Body { get; set; }
 
         public string? Type { get; set; }
 
@@ -24,5 +24,7 @@
         public uint UserId { get; set; }
 
         public virtual UsersEntity User { get; set; } = null!;
+
+        public virtual UsersEntity Sender { get; set; } = null!;
     }
 }

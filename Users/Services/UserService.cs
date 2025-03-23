@@ -1,126 +1,313 @@
-﻿using BackEnd.DataBase.Context;
-using BackEnd.DataBase.Entities;
-using BackEnd.Users.DTO;
-using BackEnd.Users.Utils;
-using Microsoft.AspNetCore.Identity;
+﻿using BackEnd.DB.Context;
+using BackEnd.DB.Entities;
+using BackEnd.Users.DTO.RequestDTO;
+using BackEnd.Users.DTO.ResponseDTO;
+using BackEnd.Utils.Roles;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace BackEnd.Users.Services
 {
-    public class UserService(ILogger<UserService> logger, VideoHubDbContext db, IConfiguration config)
+    public class UserService(ILogger<UserService> logger, MyDbContext db)
     {
-        public async Task<string?> AuthenticationUser(AuthenticationDTO dto)
+        public async Task<List<UserResponseDTO>?> GetUsers()
         {
             try
             {
-                var passwordHash = CreateHashCode(dto.Password!);
-                var user = await UserStorage.GetUser(dto.Login, passwordHash);
-                if (user is null) return null;
-                logger.LogInformation("User {user} was authenticated", user.Login);
-                return new JwtSecurityTokenHandler().WriteToken(CreateToken(user));
+                var users = await db.Users
+                    .Include(u => u.M2mUsersOrganizations)
+                    .Include(u => u.M2mUsersFolders)
+                    .Select(u => new UserResponseDTO
+                    {
+                        Id = u.Id,
+                        Login = u.Login,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Phone = u.Phone,
+                        Note = u.Note,
+                        MaxSessions = u.MaxSessions,
+                        Disabled = u.Disabled,
+                        AccessLevel = u.AccessLevel,
+                        IsLoggedIn = u.IsLoggedIn,
+                        Organizations = u.M2mUsersOrganizations != null ? u.M2mUsersOrganizations.Select(uo => new DTO.ResponseDTO.Organizations
+                        {
+                            Id = uo.OrganizationId,
+                            // Title = db.Organizations.Find(uo.OrganizationId).Title,
+                            IsMember = uo.IsMember,
+                            IsAdmin = uo.IsAdmin,
+                        }).ToList() : null,
+                        Folders = u.M2mUsersFolders != null ? u.M2mUsersFolders.Select(uf => new DTO.ResponseDTO.Folders
+                        {
+                            Id = uf.FolderId,
+                            CanView = uf.CanView,
+                        }).ToList() : null,
+                    }).ToListAsync();
+
+                return users;
             }
             catch (Exception ex)
             {
-                logger.LogError("Error has occured in user Authentication: {exception}", ex);
+                logger.LogError("Exceptions occured during organization finding {exception}", ex);
                 return null;
             }
         }
 
-        //public async Task<string?> AuthenticationUser(AuthenticationDTO dto)
-        //{
-        //    try
-        //    {
-        //        var passwordHash = CreateHashCode(dto.Password!);
-        //        var user = await db.Users.FirstOrDefaultAsync(u => u.UsrPassword == passwordHash && u.UsrLogin == dto.Login);
-        //        if (user is null) return null;
-        //        logger.LogInformation("User {user} was authenticated", user.UsrName);
-        //        return new JwtSecurityTokenHandler().WriteToken(CreateToken(user));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.LogError("Error has occured in user Authentication: {exception}", ex);
-        //        return null;
-        //    }
-        //}
+        public async Task<UserResponseDTO?> GetUser(uint userId)
+        {
+            try
+            {
+                var user = await db.Users
+                    .Include(u => u.M2mUsersOrganizations)
+                    .Include(u => u.M2mUsersFolders)
+                    .Where(u => u.Id == userId)
+                    .Select(u => new UserResponseDTO
+                    {
+                        Id = u.Id,
+                        Login = u.Login,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Phone = u.Phone,
+                        Note = u.Note,
+                        MaxSessions = u.MaxSessions,
+                        Disabled = u.Disabled,
+                        AccessLevel = u.AccessLevel,
+                        IsLoggedIn = u.IsLoggedIn,
+                        Organizations = u.M2mUsersOrganizations != null ? u.M2mUsersOrganizations.Select(uo => new DTO.ResponseDTO.Organizations
+                        {
+                            Id = uo.OrganizationId,
+                            // Title = db.Organizations.Find(uo.OrganizationId).Title,
+                            IsMember = uo.IsMember,
+                            IsAdmin = uo.IsAdmin,
+                        }).ToList() : null,
+                        Folders = u.M2mUsersFolders != null ? u.M2mUsersFolders.Select(uf => new DTO.ResponseDTO.Folders
+                        {
+                            Id = uf.FolderId,
+                            CanView = uf.CanView,
+                        }).ToList() : null,
+                    }).FirstOrDefaultAsync();
 
-        public async Task<string?> RegisterUser(RegistrationDTO dto)
+                return user;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Exceptions occured during organization finding {exception}", ex);
+                return null;
+            }
+        }
+
+        public async Task<UserResponseDTO?> CreateUser(CreateUserDTO dto)
         {
             try
             {
                 var passwordHash = CreateHashCode(dto.Password);
-                var user = await UserStorage.CreateUser(dto.Login, passwordHash);
 
-                logger.LogInformation("User {user} was registered", user.Login);
+                if (!RoleType.AllRoles.Contains(dto.AccessLevel))
+                {
+                    throw new Exception("Bad Request");
+                }
 
-                return new JwtSecurityTokenHandler().WriteToken(CreateToken(user));
+                var user = new UsersEntity
+                {
+                    Login = dto.Login,
+                    Password = passwordHash,
+                    Name = dto.Name,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+                    Note = dto.Note,
+                    MaxSessions = dto.MaxSession,
+                    Disabled = dto.Disabled,
+                    AccessLevel = dto.AccessLevel,
+                    IsLoggedIn = false,
+                };
+
+                db.Users.Add(user);
+                await db.SaveChangesAsync();
+
+                if (dto.Organizations != null)
+                    foreach (var org in dto.Organizations)
+                    {
+                        var userOrganization = new M2mUsersOrganizationsEntity
+                        {
+                            UserId = user.Id,
+                            OrganizationId = org.Id,
+                            IsMember = org.IsMember,
+                            IsAdmin = org.IsAdmin,
+                        };
+
+                        db.M2mUsersOrganizations.Add(userOrganization);
+
+                        var organization = await db.Organizations.FindAsync(org.Id);
+
+                        if (organization != null) organization.UserCount++;
+                    }
+
+                await db.SaveChangesAsync();
+
+                if (dto.Folders != null)
+                    foreach (var fold in dto.Folders)
+                    {
+                        var userFolder = new M2mUsersFoldersEntity
+                        {
+                            UserId = user.Id,
+                            FolderId = fold.Id,
+                            CanView = fold.CanView,
+                        };
+
+                        db.M2mUsersFolders.Add(userFolder);
+                    }
+
+                await db.SaveChangesAsync();
+
+                return await GetUser(user.Id);
             }
             catch (Exception ex)
             {
-                logger.LogError("Error has occured while user registration: {exception}", ex);
+                logger.LogError("Exceptions occured during organization finding {exception}", ex);
                 return null;
             }
         }
 
-        //public async Task<string?> RegisterUser(RegistrationDTO dto)
-        //{
-        //    try
-        //    {
-        //        var passwordHash = CreateHashCode(dto.Password);
-        //        var user = new User { UsrPassword = passwordHash, UsrRole = "User", UsrLogin = dto.Login };
-        //        db.Users.Add(user);
-        //        int numberOfAdded = await db.SaveChangesAsync();
-        //        if (numberOfAdded == 0) return null;
-        //        logger.LogInformation("User {user} was registered", user.UsrName);
-
-        //        return new JwtSecurityTokenHandler().WriteToken(CreateToken(user));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.LogError("Error has occured while user registration: {exception}", ex);
-        //        return null;
-        //    }
-        //}
-
-        private JwtSecurityToken CreateToken(DataBase.Entities.User user)
+        public async Task<UserResponseDTO?> ChangeUser(UserRequestDTO dto, uint userId)
         {
-            IEnumerable<Claim> claims =
-                [
-                    new Claim(ClaimTypes.Name, user.UsrLogin),
-                    new Claim(ClaimTypes.Role, user.UsrRole),
-                    new Claim(ClaimTypes.NameIdentifier, user.UsrId.ToString())
-                ];
-            return new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
-                issuer: config["JwtParameters:Issuer"],
-                audience: config["JwtParameters:Audience"],
-                signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtParameters:Key"]!)),
-                    SecurityAlgorithms.HmacSha256)
-            );
+            try
+            {
+                var user = await db.Users.FindAsync(userId);
+
+                if (user is null)
+                {
+                    return null;
+                }
+
+                if (dto.Login != null) user.Login = dto.Login;
+                if (dto.Name != null) user.Name = dto.Name;
+                if (dto.Email != null) user.Email = dto.Email;
+                if (dto.Phone != null) user.Phone = dto.Phone;
+                if (dto.Note != null) user.Note = dto.Note;
+                if (dto.MaxSessions != null) user.MaxSessions = dto.MaxSessions.Value;
+                if (dto.Disabled != null) user.Disabled = dto.Disabled.Value;
+                if (dto.AccessLevel != null && RoleType.AllRoles.Contains(dto.AccessLevel)) user.AccessLevel = dto.AccessLevel;
+
+                if (dto.Organizations != null)
+                    foreach (var org in dto.Organizations)
+                    {
+                        var organizationUser = await db.M2mUsersOrganizations
+                            .Include(uo => uo.Organization)
+                            .FirstOrDefaultAsync(uo => uo.UserId == userId && uo.OrganizationId == org.Id);
+
+                        if (organizationUser != null)
+                        {
+                            if (organizationUser.IsMember != org.IsMember)
+                            {
+                                if (org.IsMember)
+                                {
+                                    organizationUser.Organization.UserCount++;
+                                }
+                                else
+                                {
+                                    organizationUser.Organization.UserCount--;
+                                }
+
+                                organizationUser.IsMember = org.IsMember;
+                            }
+
+                            organizationUser.IsAdmin = org.IsAdmin;
+                        }
+                        else
+                        {
+                            var newOrganizationUser = new M2mUsersOrganizationsEntity
+                            {
+                                UserId = user.Id,
+                                OrganizationId = org.Id,
+                                IsMember = org.IsMember,
+                                IsAdmin = org.IsAdmin,
+                            };
+
+                            db.M2mUsersOrganizations.Add(newOrganizationUser);
+
+                            if (newOrganizationUser.IsMember)
+                            {
+                                var organization = await db.Organizations.FindAsync(org.Id);
+
+                                if (organization != null)
+                                    organization.UserCount++;
+                            }
+                        }
+                    }
+
+                await db.SaveChangesAsync();
+
+                if (dto.Folders != null)
+                    foreach (var fold in dto.Folders)
+                    {
+                        var folderUser = await db.M2mUsersFolders
+                            .FirstOrDefaultAsync(uf => uf.UserId == userId && uf.FolderId == fold.Id);
+
+                        if (folderUser != null)
+                        {
+                            folderUser.CanView = fold.CanView;
+                        }
+                        else
+                        {
+                            var userFolder = new M2mUsersFoldersEntity
+                            {
+                                UserId = user.Id,
+                                FolderId = fold.Id,
+                                CanView = fold.CanView,
+                            };
+
+                            db.M2mUsersFolders.Add(userFolder);
+                        }
+                    }
+
+                await db.SaveChangesAsync();
+
+                return await GetUser(userId);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Exceptions occured during organization finding {exception}", ex);
+                return null;
+            }
         }
 
-        private JwtSecurityToken CreateToken(Utils.User user)
+        public async Task<bool?> DeleteUser(uint userId)
         {
-            IEnumerable<Claim> claims =
-                [
-                    new Claim(ClaimTypes.Name, user.Login)
-                ];
-            return new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
-                issuer: config["JwtParameters:Issuer"],
-                audience: config["JwtParameters:Audience"],
-                signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtParameters:Key"]!)),
-                    SecurityAlgorithms.HmacSha256)
-            );
+            try
+            {
+                var user = await db.Users.FindAsync(userId);
+
+                if (user is null)
+                {
+                    return false;
+                }
+
+                var userOrganizations = await db.M2mUsersOrganizations
+                    .Where(uo => uo.UserId == userId)
+                    .ToListAsync();
+
+                foreach (var us in userOrganizations)
+                {
+                    var organization = await db.Organizations.FindAsync(us.OrganizationId);
+                    if (organization != null)
+                    {
+                        organization.UserCount--;
+                        db.Organizations.Update(organization);
+                    }
+                }
+
+                db.Users.Remove(user);
+                await db.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Exceptions occured during organization finding {exception}", ex);
+                return null;
+            }
         }
+
 
         private string CreateHashCode(string input)
         {

@@ -1,7 +1,7 @@
 ﻿using BackEnd.DB.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BackEnd.Tables.Context
+namespace BackEnd.DB.Context
 {
     public class MyDbContext : DbContext
     {
@@ -24,7 +24,7 @@ namespace BackEnd.Tables.Context
 
         public DbSet<FoldersEntity> Folders { get; set; } = null!;
 
-        public DbSet<M2mUsersFoldersEntity> M2mUsersFoldersEntity { get; set; } = null!;
+        public DbSet<M2mUsersFoldersEntity> M2mUsersFolders { get; set; } = null!;
 
         public DbSet<CamerasEntity> Cameras { get; set; } = null!;
 
@@ -42,7 +42,9 @@ namespace BackEnd.Tables.Context
 
         public DbSet<MessagesEntity> Messages { get; set; } = null!;
 
+        public DbSet<M2mUsersCamerasEntity> m2MUsersCameras { get; set; } = null!;
 
+        // при создании бд, нужно создать 0 папку и 0 организцию https://metanit.com/sharp/efcore/2.14.php
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UsersEntity>(entity =>
@@ -60,7 +62,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(u => u.Id)
                     .HasColumnName("usr_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
                 entity.Property(u => u.Name)
                     .HasColumnName("usr_name")
                     .HasMaxLength(50);
@@ -91,7 +93,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: Name, limit, defaultValue, autoIncriment
                 entity.Property(o => o.Id)
                     .HasColumnName("org_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
                 entity.Property(o => o.Title)
                     .HasColumnName("org_title")
                     .HasMaxLength(50);
@@ -115,7 +117,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: Name, limit, defaultValue, autoIncriment
                 entity.Property(e => e.Id)
                     .HasColumnName("uo_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
                 entity.Property(e => e.UserId)
                     .HasColumnName("uo_usr_id");
                 entity.Property(e => e.OrganizationId)
@@ -142,26 +144,26 @@ namespace BackEnd.Tables.Context
 
                 // Indexes
                 entity.HasIndex(f => f.OrganizationId, "fk_Folders_org_idx");
-                entity.HasIndex(f => f.ParentsId, "fk_Folders_parents_idx");
+                entity.HasIndex(f => f.ParentId, "fk_Folders_parent_idx");
 
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(f => f.Id)
                     .HasColumnName("fld_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
                 entity.Property(f => f.OrganizationId)
                     .HasColumnName("fld_org_id");
-                entity.Property(f => f.ParentsId)
-                    .HasColumnName("fld_parents_id");
+                entity.Property(f => f.ParentId)
+                    .HasColumnName("fld_parent_id");
 
                 // Foreign Key
                 entity.HasOne(f => f.Organization).WithMany(o => o.Folders)
                     .HasForeignKey(f => f.OrganizationId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_Folders_org");
-                entity.HasOne(f => f.ParentsFolder).WithMany(f => f.ChildFolders)
-                    .HasForeignKey(f => f.ParentsId)
+                entity.HasOne(f => f.ParentFolder).WithMany(f => f.ChildFolders)
+                    .HasForeignKey(f => f.ParentId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("fk_Folders_parents");
+                    .HasConstraintName("fk_Folders_parent");
             });
 
             modelBuilder.Entity<M2mUsersFoldersEntity>(entity =>
@@ -179,7 +181,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: Name, limit, defaultValue, autoIncriment
                 entity.Property(e => e.Id)
                     .HasColumnName("uf_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
                 entity.Property(e => e.UserId)
                     .HasColumnName("uf_usr_id");
                 entity.Property(e => e.FolderId)
@@ -207,20 +209,20 @@ namespace BackEnd.Tables.Context
                 // Indexes
                 entity.HasIndex(c => c.FolderId, "fk_Cameras_fld_idx");
                 entity.HasIndex(c => c.PresetId, "fk_Cameras_prst_idx");
-                entity.HasIndex(c => c.AgentId, "fk_Cameras_agnt_idx");
+                //entity.HasIndex(c => c.AgentId, "fk_Cameras_agnt_idx");
                 entity.HasIndex(c => c.StreamerId, "fk_Cameras_strm_idx");
 
 
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(c => c.Id)
                     .HasColumnName("cam_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
                 entity.Property(c => c.FolderId)
                     .HasColumnName("cam_fld_id");
                 entity.Property(c => c.PresetId)
                     .HasColumnName("cam_prst_id");
-                entity.Property(c => c.AgentId)
-                    .HasColumnName("cam_agnt_id");
+                //entity.Property(c => c.AgentId)
+                //    .HasColumnName("cam_agnt_id");
                 entity.Property(c => c.StreamerId)
                     .HasColumnName("cam_strm_id");
 
@@ -233,10 +235,10 @@ namespace BackEnd.Tables.Context
                     .HasForeignKey(c => c.PresetId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_Cameras_prst");
-                entity.HasOne(c => c.Agent).WithMany(a => a.Cameras)
-                    .HasForeignKey(c => c.AgentId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("fk_Cameras_agnt");
+                //entity.HasOne(c => c.Agent).WithMany(a => a.Cameras)
+                //    .HasForeignKey(c => c.AgentId)
+                //    .OnDelete(DeleteBehavior.Cascade)
+                //    .HasConstraintName("fk_Cameras_agnt");
                 entity.HasOne(c => c.Streamer).WithMany(s => s.Cameras)
                     .HasForeignKey(c => c.StreamerId)
                     .OnDelete(DeleteBehavior.Cascade)
@@ -257,7 +259,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(p => p.Id)
                       .HasColumnName("prst_id")
-                      .UseIdentityColumn();
+                      .ValueGeneratedOnAdd();
 
                 // Foreign Key
 
@@ -277,7 +279,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(e => e.Id)
                       .HasColumnName("envt_id")
-                      .UseIdentityColumn();
+                      .ValueGeneratedOnAdd();
                 entity.Property(e => e.CameraId)
                       .HasColumnName("envt_cam_id");
 
@@ -303,7 +305,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(a => a.Id)
                       .HasColumnName("agnt_id")
-                      .UseIdentityColumn();
+                      .ValueGeneratedOnAdd();
 
                 // Foreign Key
 
@@ -323,7 +325,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(s => s.Id)
                       .HasColumnName("strm_id")
-                      .UseIdentityColumn();
+                      .ValueGeneratedOnAdd();
 
                 // Foreign Key
 
@@ -343,7 +345,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
                 entity.Property(m => m.Id)
                       .HasColumnName("mosc_id")
-                      .UseIdentityColumn();
+                      .ValueGeneratedOnAdd();
                 entity.Property(m => m.OrganizationId)
                       .HasColumnName("mosc_org_id");
 
@@ -369,7 +371,7 @@ namespace BackEnd.Tables.Context
                 // Other columns: Name, limit, defaultValue, autoIncriment
                 entity.Property(e => e.Id)
                     .HasColumnName("mc_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
                 entity.Property(e => e.MosaicId)
                     .HasColumnName("mc_mosc_id");
                 entity.Property(e => e.CameraId)
@@ -398,7 +400,7 @@ namespace BackEnd.Tables.Context
                 // Indexes
                 entity.Property(m => m.Id)
                     .HasColumnName("mess_id")
-                    .UseIdentityColumn();
+                    .ValueGeneratedOnAdd();
 
                 // Other columns: FK, Name, limit, defaultValue, autoIncriment
 
