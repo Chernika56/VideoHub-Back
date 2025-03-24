@@ -10,18 +10,18 @@ namespace BackEnd.Organizations.Enpoints
     {
         public static void MapOrganizationFolderUsers(this IEndpointRouteBuilder builder)
         {
-            builder.MapGet("/{organizationId:uint}/folders/{folderId:uint}/users", GetFolderUsers)
+            builder.MapGet("/{organizationId:int}/folders/{folderId:int}/users", GetFolderUsers)
                 .WithOpenApi();
-            builder.MapGet("/{organizationId:uint}/folders/{folderId:uint}/users/{userId:uint}", GetFolderUser)
+            builder.MapGet("/{organizationId:int}/folders/{folderId:int}/users/{userId:int}", GetFolderUser)
                 .WithOpenApi();
-            builder.MapPut("/{organizationId:uint}/folders/{folderId:uint}/users/{userId:uint}", ChangeFolderUser)
+            builder.MapPut("/{organizationId:int}/folders/{folderId:int}/users/{userId:int}", ChangeFolderUser)
                 .WithOpenApi();
-            builder.MapDelete("/{organizationId:uint}/folders/{folderId:uint}/users/{userId:uint}", DeleteFolderUser)
+            builder.MapDelete("/{organizationId:int}/folders/{folderId:int}/users/{userId:int}", DeleteFolderUser)
                 .WithOpenApi();
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> GetFolderUsers([FromServices] OrganizationFolderUserService service, uint organizationId, uint folderId)
+        private static async Task<IResult> GetFolderUsers([FromServices] OrganizationFolderUserService service, int organizationId, int folderId)
         {
             var users = await service.GetFolderUsers(organizationId, folderId);
 
@@ -29,7 +29,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> GetFolderUser([FromServices] OrganizationFolderUserService service, uint organizationId, uint folderId, uint userId)
+        private static async Task<IResult> GetFolderUser([FromServices] OrganizationFolderUserService service, int organizationId, int folderId, int userId)
         {
             var user = await service.GetFolderUser(organizationId, folderId, userId);
 
@@ -37,7 +37,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> ChangeFolderUser([FromServices] OrganizationFolderUserService service, [FromBody] FolderUserRequestDTO dto, uint organizationId, uint folderId, uint userId)
+        private static async Task<IResult> ChangeFolderUser([FromServices] OrganizationFolderUserService service, [FromBody] FolderUserRequestDTO dto, int organizationId, int folderId, int userId)
         {
             var user = await service.ChangeFolderUser(dto, organizationId, folderId, userId);
 
@@ -45,7 +45,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> DeleteFolderUser([FromServices] OrganizationFolderUserService service, uint organizationId, uint folderId, uint userId)
+        private static async Task<IResult> DeleteFolderUser([FromServices] OrganizationFolderUserService service, int organizationId, int folderId, int userId)
         {
             var res = await service.DeleteFolderUser(organizationId, folderId, userId);
 

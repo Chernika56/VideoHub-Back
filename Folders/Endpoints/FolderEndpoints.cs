@@ -12,7 +12,7 @@ namespace BackEnd.Folders.Endpoints
         {
             builder.MapGet("/", GetFolders)
                 .WithOpenApi();
-            builder.MapGet("/{folderId:uint}", GetFolder)
+            builder.MapGet("/{folderId:int}", GetFolder)
                 .WithOpenApi();
         }
 
@@ -25,7 +25,7 @@ namespace BackEnd.Folders.Endpoints
         }
 
         [Authorize(Policy = PolicyType.AdministratorPolicy)]
-        private static async Task<IResult> GetFolder([FromServices] FolderService service, uint folderId)
+        private static async Task<IResult> GetFolder([FromServices] FolderService service, int folderId)
         {
             var folder = await service.GetFolder(folderId);
 

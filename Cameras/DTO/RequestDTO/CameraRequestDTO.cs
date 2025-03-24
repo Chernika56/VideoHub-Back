@@ -6,7 +6,7 @@
 
         // public AgentsDTO? Agents { get; set; }
 
-        public string Name { get; set; } = null!;
+        // public string Name { get; set; } = null!;
 
         public string? Comment { get; set; }
 
@@ -15,6 +15,8 @@
         public float? DVRDepth { get; set; } // (архив) дни // первично из presets потом может изменится
 
         public float? DVRLockDays { get; set; } // (Лимит DVR в днях для записей по движению) дни // первично из presets потом может изменится
+
+        public string? DVRPath { get; set; }
 
         public uint? DVRSpace { get; set; } // (Пространство DVR) ГБ // первично из presets потом может изменится
 

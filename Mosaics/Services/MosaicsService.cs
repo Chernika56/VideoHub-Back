@@ -73,7 +73,7 @@ namespace BackEnd.Mosaics.Services
             }
         }
 
-        public async Task<MosaicResponseDTO?> GetMosaic(uint mosaic_id)
+        public async Task<MosaicResponseDTO?> GetMosaic(int mosaic_id)
         {
             try
             {
@@ -102,7 +102,6 @@ namespace BackEnd.Mosaics.Services
                         Visible = m.Visible,
                         Cameras = m.M2mMosaicsCameras.Select(mc => new CameraResponseDTO
                         {
-                            Id = mc.Camera.Id,
                             Comment = mc.Camera.Comment,
                             Coordinates = mc.Camera.Coordinates ?? "",
                             DVRDepth = mc.Camera.DVRDepth,
@@ -197,7 +196,7 @@ namespace BackEnd.Mosaics.Services
                     var mosaicsCameras = new M2mMosaicsCamerasEntity
                     {
                         MosaicId = mosaic.Id,
-                        CameraId = cam,
+                        CameraName = cam,
                     };
 
                     db.M2mMosaicsCameras.Add(mosaicsCameras);
@@ -205,7 +204,7 @@ namespace BackEnd.Mosaics.Services
 
                 await db.SaveChangesAsync();
 
-                return await GetMosaic(mosaic.Id);
+                return await GetMosaic((int)mosaic.Id);
             }
             catch (Exception ex)
             {
@@ -214,7 +213,7 @@ namespace BackEnd.Mosaics.Services
             }
         }
 
-        public async Task<MosaicResponseDTO?> ChangeMosaic(MosaicRequestDTO dto, uint mosaicId)
+        public async Task<MosaicResponseDTO?> ChangeMosaic(MosaicRequestDTO dto, int mosaicId)
         {
             try
             {
@@ -249,16 +248,16 @@ namespace BackEnd.Mosaics.Services
                             .Where(mc => mc.MosaicId == mosaicId)
                             .ToListAsync();
 
-                        var existingCameras = existingMosaicsCameras.Select(mc => mc.CameraId).ToHashSet();
-                        var newCameras = dto.Cameras?.ToHashSet() ?? new HashSet<uint>();
+                        var existingCameras = existingMosaicsCameras.Select(mc => mc.CameraName).ToHashSet();
+                        var newCameras = dto.Cameras?.ToHashSet() ?? new HashSet<string>();
 
-                        var camerasToRemove = existingMosaicsCameras.Where(mc => !newCameras.Contains(mc.CameraId)).ToList();
+                        var camerasToRemove = existingMosaicsCameras.Where(mc => !newCameras.Contains(mc.CameraName)).ToList();
 
                         var camerasToAdd = newCameras.Except(existingCameras)
                             .Select(cameraId => new M2mMosaicsCamerasEntity
                             {
-                                MosaicId = mosaicId,
-                                CameraId = cameraId
+                                MosaicId = (uint)mosaicId,
+                                CameraName = cameraId
                             })
                             .ToList();
 
@@ -282,7 +281,7 @@ namespace BackEnd.Mosaics.Services
             }
         }
 
-        public async Task<bool?> DeleteMosaic(uint mosaicId)
+        public async Task<bool?> DeleteMosaic(int mosaicId)
         {
             try
             {

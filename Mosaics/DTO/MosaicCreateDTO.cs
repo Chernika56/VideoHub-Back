@@ -10,6 +10,6 @@
 
         public bool Visible { get; set; }
 
-        public ICollection<uint> Cameras { get; set; } = new List<uint>();
+        public ICollection<string> Cameras { get; set; } = new List<string>();
     }
 }

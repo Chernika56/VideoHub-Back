@@ -52,7 +52,7 @@ namespace BackEnd.Authorization.Services
             );
         }
 
-        private string CreateHashCode(string input)
+        public string CreateHashCode(string input)
         {
             string hash = string.Empty;
             using (SHA256 sha256 = SHA256.Create())

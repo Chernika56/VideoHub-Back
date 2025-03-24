@@ -1,10 +1,22 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=fluss;Username=root;Password=root"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=fluss;Username=postgres;Password=root"
   },
   "JwtParameters": {
     "Key": "SuperSecureKeyForJWTThatIsLongEnoughForHS256Encryption32bytes",
     "Audience": "Audience",
     "Issuer": "Issuer"
-  }
+  },
+  "Streamer": {
+    "IpAddress": "http://172.16.0.48",
+    "Login": "fluss",
+    "Password": "321678qw"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
 }

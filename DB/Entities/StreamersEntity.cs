@@ -6,9 +6,6 @@ namespace BackEnd.DB.Entities
     {
         public uint Id { get; set; }
 
-        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
-
-
         public string HostName { get; set; } = null!;
 
         public string ApiUrl { get; set; } = null!;
@@ -18,6 +15,8 @@ namespace BackEnd.DB.Entities
         public bool IsLocal { get; set; }
 
         public string DVRPath { get; set; } = null!;
+
+        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
 
 
         //public string? Auth { get; set; }

@@ -15,11 +15,11 @@ namespace BackEnd.Messages.Endpoints
         {
             builder.MapGet("/", GetMessages)
                 .WithOpenApi();
-            builder.MapGet("/{messageId:uint}", GetMessage)
+            builder.MapGet("/{messageId:int}", GetMessage)
                 .WithOpenApi();
             builder.MapPost("/", SendMessage)
                 .WithOpenApi();
-            builder.MapDelete("/{messageId:uint}", DeleteMessage)
+            builder.MapDelete("/{messageId:int}", DeleteMessage)
                 .WithOpenApi();
         }
 
@@ -32,7 +32,7 @@ namespace BackEnd.Messages.Endpoints
         }
 
         [Authorize(Policy = PolicyType.AdministratorPolicy)]
-        private async static Task<IResult> GetMessage([FromServices] MessageService service, uint messageId)
+        private async static Task<IResult> GetMessage([FromServices] MessageService service, int messageId)
         {
             var message = await service.GetMessage(messageId);
 
@@ -48,7 +48,7 @@ namespace BackEnd.Messages.Endpoints
         }
 
         [Authorize(Policy = PolicyType.AdministratorPolicy)]
-        private async static Task<IResult> DeleteMessage([FromServices] MessageService service, uint messageId)
+        private async static Task<IResult> DeleteMessage([FromServices] MessageService service, int messageId)
         {
             var res = await service.DeleteMessage(messageId);
 

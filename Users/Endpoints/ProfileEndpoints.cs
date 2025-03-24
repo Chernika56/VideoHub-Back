@@ -17,7 +17,7 @@ namespace BackEnd.Users.Endpoints
                 .WithOpenApi();
             builder.MapGet("/organizations", GetMyOrganizations)
                 .WithOpenApi();
-            builder.MapGet("/organizations/{organization_id:uint}/folders", GetMyFoldersInOrganization)
+            builder.MapGet("/organizations/{organization_id:int}/folders", GetMyFoldersInOrganization)
                 .WithOpenApi();
             builder.MapGet("/folders", GetMyFolders)
                 .WithOpenApi();
@@ -50,7 +50,7 @@ namespace BackEnd.Users.Endpoints
         }
 
         [Authorize]
-        private async static Task<IResult> GetMyFoldersInOrganization([FromServices] ProfileService service, uint organization_id)
+        private async static Task<IResult> GetMyFoldersInOrganization([FromServices] ProfileService service, int organization_id)
         {
             var folders = await service.GetMyFoldersInOrganization(organization_id);
 

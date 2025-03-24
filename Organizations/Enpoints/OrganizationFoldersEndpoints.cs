@@ -10,20 +10,20 @@ namespace BackEnd.Organizations.Enpoints
     {
         public static void MapOrganizationFolders(this IEndpointRouteBuilder builder)
         {
-            builder.MapGet("/{organizationId:uint}/folders", GetOrganizationFolders)
+            builder.MapGet("/{organizationId:int}/folders", GetOrganizationFolders)
                 .WithOpenApi();
-            builder.MapPost("/{organizationId:uint}/folders", CreateOrganizationFolder)
+            builder.MapPost("/{organizationId:int}/folders", CreateOrganizationFolder)
                 .WithOpenApi();
-            builder.MapGet("/{organizationId:uint}/folders/{folderId:uint}", GetOrganizationFolder)
+            builder.MapGet("/{organizationId:int}/folders/{folderId:int}", GetOrganizationFolder)
                 .WithOpenApi();
-            builder.MapPut("/{organizationId:uint}/folders/{folderId:uint}", ChangeOrganizationFolder)
+            builder.MapPut("/{organizationId:int}/folders/{folderId:int}", ChangeOrganizationFolder)
                 .WithOpenApi();
-            builder.MapDelete("/{organizationId:uint}/folders/{folderId:uint}", DeleteFolder)
+            builder.MapDelete("/{organizationId:int}/folders/{folderId:int}", DeleteFolder)
                 .WithOpenApi();
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> GetOrganizationFolders([FromServices] OrganizationFoldersService service, uint organizationId)
+        private static async Task<IResult> GetOrganizationFolders([FromServices] OrganizationFoldersService service, int organizationId)
         {
             var folders = await service.GetOrganizationFolders(organizationId);
 
@@ -31,7 +31,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> CreateOrganizationFolder([FromServices] OrganizationFoldersService service, [FromBody] OrganizationFolderRequestDTO dto, uint organizationId)
+        private static async Task<IResult> CreateOrganizationFolder([FromServices] OrganizationFoldersService service, [FromBody] OrganizationFolderRequestDTO dto, int organizationId)
         {
             var folder = await service.CreateOrganizationFolder(dto, organizationId);
 
@@ -39,7 +39,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> GetOrganizationFolder([FromServices] OrganizationFoldersService service, uint organizationId, uint folderId)
+        private static async Task<IResult> GetOrganizationFolder([FromServices] OrganizationFoldersService service, int organizationId, int folderId)
         {
             var folder = await service.GetOrganizationFolder(organizationId, folderId);
 
@@ -47,7 +47,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> ChangeOrganizationFolder([FromServices] OrganizationFoldersService service, [FromBody] OrganizationFolderRequestDTO dto, uint organizationId, uint folderId)
+        private static async Task<IResult> ChangeOrganizationFolder([FromServices] OrganizationFoldersService service, [FromBody] OrganizationFolderRequestDTO dto, int organizationId, int folderId)
         {
             var folder = await service.ChangeOrganizationFolder(dto, organizationId, folderId);
 
@@ -55,7 +55,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> DeleteFolder([FromServices] OrganizationFoldersService service, uint organizationId, uint folderId)
+        private static async Task<IResult> DeleteFolder([FromServices] OrganizationFoldersService service, int organizationId, int folderId)
         {
             var res = await service.DeleteFolder(organizationId, folderId);
 

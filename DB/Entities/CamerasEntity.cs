@@ -4,41 +4,18 @@ namespace BackEnd.DB.Entities
 {
     public class CamerasEntity
     {
-        public uint Id { get; set; }
-
         public string Name { get; set; } = null!; // сделать первичным ключом
 
         public uint FolderId { get; set; }
-        // folder_coordinates
-
-        public uint PresetId { get; set; }
-        // all
-
-        // public uint AgentId { get; set; }
-        // agent_id, agent_key, agent_model, agent_serial, agent_status
-
-        public uint StreamerId { get; set; }
-        // public string? DVRPath { get; set; } // из streamers
-
         public virtual FoldersEntity Folder { get; set; } = null!;
 
+        public uint PresetId { get; set; }
         public virtual PresetsEntity Preset { get; set; } = null!;
 
-        // public virtual AgentsEntity Agent { get; set; } = null!;
-
+        public uint StreamerId { get; set; }
         public virtual StreamersEntity Streamer { get; set; } = null!;
 
-        public virtual ICollection<EventsEntity>? Events { get; set; } = new List<EventsEntity>();
-
-        public virtual ICollection<M2mMosaicsCamerasEntity>? M2mMosaicsCameras { get; set; } = new List<M2mMosaicsCamerasEntity>();
-
-
         public uint OrganizationId { get; set; }
-
-        public virtual ICollection<M2mUsersCamerasEntity> M2MUsersCameras { get; set; } = new List<M2mUsersCamerasEntity>();
-
-
-        
 
         public string Comment { get; set; } = null!;
 
@@ -50,11 +27,9 @@ namespace BackEnd.DB.Entities
 
         public float? DVRLockDays { get; set; } // (Лимит DVR в днях для записей по движению) дни // первично из presets потом может изменится
 
+        public string? DVRPath { get; set; }
+
         public uint? DVRSpace { get; set; } // (Пространство DVR) ГБ // первично из presets потом может изменится
-
-        // public bool? HasActions { get; set; }
-
-        // lastChange???
 
         public DateTimeOffset LastEventTime { get; set; }
 
@@ -65,7 +40,6 @@ namespace BackEnd.DB.Entities
         public bool? OnvifPTZ { get; set; }
 
         public string? OnvifURL { get; set; }
-
 
         //permissions
         public bool? View { get; set; }
@@ -81,11 +55,23 @@ namespace BackEnd.DB.Entities
         public bool? Actions { get; set; }
         //permissions
 
+        public string? PostalAddress { get; set; }
+
+        public string StreamUrl { get; set; } = null!;
+
+        public string? SubStreamUrl { get; set; }
+
+        public string Title { get; set; } = null!;
+
+        public virtual ICollection<EventsEntity>? Events { get; set; } = new List<EventsEntity>();
+
+        public virtual ICollection<M2mMosaicsCamerasEntity>? M2mMosaicsCameras { get; set; } = new List<M2mMosaicsCamerasEntity>();
+
+        public virtual ICollection<M2mUsersCamerasEntity> M2MUsersCameras { get; set; } = new List<M2mUsersCamerasEntity>();
+
         //playback_config
         //public string Token { get; set; } = null!;
         //playback_config
-
-        public string? PostalAddress { get; set; }
 
         // public uint PreciseThumbnailsDays { get; set; }
 
@@ -111,15 +97,9 @@ namespace BackEnd.DB.Entities
         //public uint HttpsPort { get; set; }
         ////stream_status
 
-        public string StreamUrl { get; set; } = null!;
-
-        public string? SubStreamUrl { get; set; }
-
         //public bool? Thumbnails { get; set; }
 
         //public string? ThumbnailsUrl { get; set; }
-
-        public string Title { get; set; } = null!;
 
         ////user_attributes
         //public bool? Favorite { get; set; }

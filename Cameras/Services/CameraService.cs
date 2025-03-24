@@ -4,11 +4,12 @@ using BackEnd.Cameras.DTO.ResponseDTO;
 using BackEnd.DB.Context;
 using BackEnd.DB.Entities;
 using BackEnd.Presets.DTO.ResponseDTO;
+using BackEnd.ServerServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.Cameras.Services
 {
-    public class CameraService(ILogger<CameraService> logger, MyDbContext db, AuthHelper authHelper)
+    public class CameraService(ILogger<CameraService> logger, MyDbContext db, AuthHelper authHelper, IStreamerService streamerService)
     {
         public async Task<List<CameraResponseDTO>?> GetCameras(string? folder_id)
         {
@@ -102,6 +103,47 @@ namespace BackEnd.Cameras.Services
         {
             try
             {
+                var data = new
+                {
+                    name = cameraName,
+                    comment = dto.Comment,
+                    dvr = new
+                    {
+                        reference = dto.DVRPath,
+                        expiration = dto.DVRDepth * 24 * 60 * 60,
+                        storage_limit = dto.DVRSpace,
+                    },
+                    //MotionDetectorEnabled
+                    meta = new
+                    {
+                        onvif_url = dto.OnvifURL,
+                        onvif_profile = dto.OnvifProfile
+                    },
+                    inputs = new[]
+                    {
+                        new
+                        {
+                            url = dto.StreamUrl
+                        }
+                    },
+                    template = "globals",
+                    title = dto.Title,
+                    on_play = new
+                    {
+                        url = "auth://vsaas"
+                    },
+                    prerush = 1,
+                    disabled = false,
+                };
+
+                var response = await streamerService.UpdateStreamAsync(cameraName, data);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Bad response from server: {response.StatusCode}");
+                }
+
+
                 var user = await db.Users.FirstOrDefaultAsync(u => u.Login == authHelper.GetCurrentUserLogin());
 
                 if (user == null)
@@ -111,7 +153,7 @@ namespace BackEnd.Cameras.Services
 
                 var camera = await db.Cameras
                     .Include(c => c.M2MUsersCameras)
-                    .FirstOrDefaultAsync(c => c.Name == dto.Name);
+                    .FirstOrDefaultAsync(c => c.Name == cameraName);
 
                 if (camera != null)
                 {
@@ -119,6 +161,7 @@ namespace BackEnd.Cameras.Services
                     if (dto.Coordinates != null) camera.Coordinates = dto.Coordinates;
                     if (dto.DVRDepth.HasValue) camera.DVRDepth = dto.DVRDepth.Value;
                     if (dto.DVRLockDays.HasValue) camera.DVRLockDays = dto.DVRLockDays.Value;
+                    if (dto.DVRPath != null) camera.DVRPath = dto.DVRPath;
                     if (dto.DVRSpace.HasValue) camera.DVRSpace = dto.DVRSpace.Value;
                     if (dto.MotionDetectorEnabled.HasValue) camera.MotionDetectorEnabled = dto.MotionDetectorEnabled.Value;
                     if (dto.OnvifProfile != null) camera.OnvifProfile = dto.OnvifProfile;
@@ -179,11 +222,12 @@ namespace BackEnd.Cameras.Services
                 {
                     camera = new CamerasEntity
                     {
-                        Name = dto.Name,
+                        Name = cameraName,
                         Comment = dto.Comment ?? "",
                         Coordinates = dto.Coordinates ?? "",
                         DVRDepth = dto.DVRDepth ?? 0,
                         DVRLockDays = dto.DVRLockDays ?? 0,
+                        DVRPath = dto.DVRPath,
                         DVRSpace = dto.DVRSpace ?? 0,
                         MotionDetectorEnabled = dto.MotionDetectorEnabled ?? false,
                         OnvifProfile = dto.OnvifProfile ?? null,
@@ -204,7 +248,7 @@ namespace BackEnd.Cameras.Services
                         StreamerId = dto.StreamerId ?? 0,
                         FolderId = dto.FolderId ?? 0,
 
-                        Enabled = false,
+                        Enabled = true,
                         LastEventTime = DateTimeOffset.UtcNow,
                     };
 
@@ -251,6 +295,8 @@ namespace BackEnd.Cameras.Services
         {
             try
             {
+                var response = await streamerService.DeleteStreamAsync(cameraName);
+
                 var camera = await db.Cameras
                     .Include(c => c.Folder)
                     .ThenInclude(f => f.Organization)
@@ -288,12 +334,11 @@ namespace BackEnd.Cameras.Services
             var camera = await query
                     .Select(c => new CameraResponseDTO
                     {
-                        Id = c.Id,
                         Comment = c.Comment,
                         Coordinates = c.Coordinates ?? "",
                         DVRDepth = c.DVRDepth,
                         DVRLockDays = c.DVRLockDays,
-                        DVRPath = c.Streamer != null ? c.Streamer.DVRPath : null,
+                        DVRPath = c.DVRPath,
                         DVRSpace = c.DVRSpace,
                         Enabled = c.Enabled,
                         FolderCoordinates = c.Folder != null ? (c.Folder.CoordinatesLatitude.ToString() + " " + c.Folder.CoordinatesLongitude.ToString()) : null,
@@ -354,12 +399,11 @@ namespace BackEnd.Cameras.Services
             var cameras = await query
                     .Select(c => new CameraResponseDTO
                     {
-                        Id = c.Id,
                         Comment = c.Comment,
                         Coordinates = c.Coordinates ?? "",
                         DVRDepth = c.DVRDepth,
                         DVRLockDays = c.DVRLockDays,
-                        DVRPath = c.Streamer != null ? c.Streamer.DVRPath : null,
+                        DVRPath = c.DVRPath,
                         DVRSpace = c.DVRSpace,
                         Enabled = c.Enabled,
                         FolderCoordinates = c.Folder != null ? (c.Folder.CoordinatesLatitude.ToString() + " " + c.Folder.CoordinatesLongitude.ToString()) : null,

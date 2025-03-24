@@ -2,16 +2,11 @@
 {
     public class M2mUsersFoldersEntity
     {
-        public uint Id { get; set; }
-
         public uint UserId { get; set; }
-
-        public uint FolderId { get; set; }
-
         public virtual UsersEntity User { get; set; } = null!;
 
+        public uint FolderId { get; set; }
         public virtual FoldersEntity Folder { get; set; } = null!;
-
 
         public bool CanView { get; set; }
 

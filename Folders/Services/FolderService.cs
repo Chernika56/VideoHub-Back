@@ -41,7 +41,7 @@ namespace BackEnd.Folders.Services
             }
         }
 
-        public async Task<FolderResponseDTO?> GetFolder(uint folderId)
+        public async Task<FolderResponseDTO?> GetFolder(int folderId)
         {
             try
             {

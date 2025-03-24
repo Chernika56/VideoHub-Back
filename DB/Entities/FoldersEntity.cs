@@ -1,37 +1,24 @@
-﻿using BackEnd.DB.Entities;
-
-namespace BackEnd.DB.Entities
+﻿namespace BackEnd.DB.Entities
 {
     public class FoldersEntity
     {
         public uint Id { get; set; }
 
         public uint OrganizationId { get; set; }
-
-        public uint? ParentId { get; set; }
-
         public virtual OrganizationsEntity Organization { get; set; } = null!;
 
-        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
-
-        public virtual FoldersEntity? ParentFolder { get; set; } = null!;
-
-        public virtual ICollection<FoldersEntity>? ChildFolders { get; set; } = new List<FoldersEntity>();
-
-        public virtual ICollection<M2mUsersFoldersEntity>? M2mUsersFolders { get; set; } = new List<M2mUsersFoldersEntity>();
-
-
-        public uint CameraCount { get; set; } // сделать триггер при добавлении записи в Cameras
+        public uint? ParentId { get; set; }
+        public virtual FoldersEntity? ParentFolder { get; set; }
 
         public string Title { get; set; } = null!;
 
+        public uint CameraCount { get; set; }
 
         // hierarchy
         public uint HierarchyLevel { get; set; }
 
         // public uint? hierarchy_OrderNum { get; set; }  // ??????????
         // hierarchy
-        
 
         // coordinates
         public float? CoordinatesLatitude { get; set; }
@@ -39,6 +26,11 @@ namespace BackEnd.DB.Entities
         public float? CoordinatesLongitude { get; set; }
         // coordinates
 
+        public virtual ICollection<FoldersEntity>? ChildFolders { get; set; } = new List<FoldersEntity>();
+
+        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
+
+        public virtual ICollection<M2mUsersFoldersEntity>? M2mUsersFolders { get; set; } = new List<M2mUsersFoldersEntity>();
 
         //// floor_plan
         //// file

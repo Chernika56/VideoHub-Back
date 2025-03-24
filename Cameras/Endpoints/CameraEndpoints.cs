@@ -12,11 +12,11 @@ namespace BackEnd.Cameras.Endpoints
         {
             builder.MapGet("/", GetCameras)
                 .WithOpenApi();
-            builder.MapGet("/{cameraName:string}", GetCamera)
+            builder.MapGet("/{cameraName}", GetCamera)
                 .WithOpenApi();
-            builder.MapPut("/{cameraName:string}", ChangeCamera)
+            builder.MapPut("/{cameraName}", ChangeCamera)
                 .WithOpenApi();
-            builder.MapDelete("/{cameraName:string}", DeleteCamera)
+            builder.MapDelete("/{cameraName}", DeleteCamera)
                 .WithOpenApi();
         }
 

@@ -12,13 +12,13 @@ namespace BackEnd.Mosaics.Endpoints
         {
             builder.MapGet("/", GetMosaics)
                 .WithOpenApi();
-            builder.MapGet("/{mosaicId:uint}", GetMosaic)
+            builder.MapGet("/{mosaicId:int}", GetMosaic)
                 .WithOpenApi();
             builder.MapPost("/", CreateMosaic)
                 .WithOpenApi();
-            builder.MapPut("/{mosaicId:uint}", ChangeMosaic)
+            builder.MapPut("/{mosaicId:int}", ChangeMosaic)
                 .WithOpenApi();
-            builder.MapDelete("/{mosaicId:uint}", DeleteMosaic)
+            builder.MapDelete("/{mosaicId:int}", DeleteMosaic)
                 .WithOpenApi();
         }
 
@@ -31,7 +31,7 @@ namespace BackEnd.Mosaics.Endpoints
         }
 
         [Authorize]
-        private async static Task<IResult> GetMosaic([FromServices] MosaicsService service, uint mosaicId)
+        private async static Task<IResult> GetMosaic([FromServices] MosaicsService service, int mosaicId)
         {
             var mosaic = await service.GetMosaic(mosaicId);
 
@@ -47,7 +47,7 @@ namespace BackEnd.Mosaics.Endpoints
         }
 
         [Authorize(Policy = PolicyType.AdministratorPolicy)]
-        private async static Task<IResult> ChangeMosaic([FromServices] MosaicsService service, MosaicRequestDTO dto, uint mosaicId)
+        private async static Task<IResult> ChangeMosaic([FromServices] MosaicsService service, MosaicRequestDTO dto, int mosaicId)
         {
             var mosaic = await service.ChangeMosaic(dto, mosaicId);
 
@@ -55,7 +55,7 @@ namespace BackEnd.Mosaics.Endpoints
         }
 
         [Authorize(Policy = PolicyType.AdministratorPolicy)]
-        private async static Task<IResult> DeleteMosaic([FromServices] MosaicsService service, uint mosaicId)
+        private async static Task<IResult> DeleteMosaic([FromServices] MosaicsService service, int mosaicId)
         {
             var res = await service.DeleteMosaic(mosaicId);
 

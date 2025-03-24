@@ -14,11 +14,11 @@ namespace BackEnd.Organizations.Enpoints
                 .WithOpenApi();
             builder.MapPost("/", CreateOrganization)
                 .WithOpenApi();
-            builder.MapGet("/{organizationId:uint}", GetOrganization)
+            builder.MapGet("/{organizationId:int}", GetOrganization)
                 .WithOpenApi();
-            builder.MapPut("/{organizationId:uint}", ChangeOrganization)
+            builder.MapPut("/{organizationId:int}", ChangeOrganization)
                 .WithOpenApi();
-            builder.MapDelete("/{organizationId:uint}", DeleteOrganization)
+            builder.MapDelete("/{organizationId:int}", DeleteOrganization)
                 .WithOpenApi();
         }
 
@@ -39,7 +39,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> GetOrganization([FromServices] OrganizationService service, uint organizationId)
+        private static async Task<IResult> GetOrganization([FromServices] OrganizationService service, int organizationId)
         {
             var organization = await service.GetOrganization(organizationId);
 
@@ -47,7 +47,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> ChangeOrganization([FromServices] OrganizationService service, [FromBody] OrganizationRequestDTO dto, uint organizationId)
+        private static async Task<IResult> ChangeOrganization([FromServices] OrganizationService service, [FromBody] OrganizationRequestDTO dto, int organizationId)
         {
             var organization = await service.ChangeOrganization(dto, organizationId);
 
@@ -55,7 +55,7 @@ namespace BackEnd.Organizations.Enpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> DeleteOrganization([FromServices] OrganizationService service, uint organizationId)
+        private static async Task<IResult> DeleteOrganization([FromServices] OrganizationService service, int organizationId)
         {
             var res = await service.DeleteOrganization(organizationId);
 

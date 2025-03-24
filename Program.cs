@@ -13,11 +13,11 @@ using BackEnd.Organizations.Enpoints;
 using BackEnd.Organizations.Services;
 using BackEnd.Presets.Endpoints;
 using BackEnd.Presets.Services;
+using BackEnd.ServerServices;
 using BackEnd.Users.Endpoints;
 using BackEnd.Users.Services;
 using BackEnd.Utils.Policies;
 using BackEnd.Utils.Roles;
-using BackEnd.Video.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -41,6 +41,15 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHttpClient<IStreamerService, StreamerService>(client =>
+{
+    string username = builder.Configuration["Streamer:Login"]!;
+    string password = builder.Configuration["Streamer:Password"]!;
+
+    var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -121,7 +130,6 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProfileService>();
-builder.Services.AddScoped<VideoService>();
 builder.Services.AddScoped<CameraService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthHelper>();

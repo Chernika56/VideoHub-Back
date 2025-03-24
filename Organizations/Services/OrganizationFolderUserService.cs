@@ -8,9 +8,9 @@ using static NuGet.Packaging.PackagingConstants;
 
 namespace BackEnd.Organizations.Services
 {
-    public class OrganizationFolderUserService(ILogger<CameraService> logger, MyDbContext db, AuthHelper authHelper)
+    public class OrganizationFolderUserService(ILogger<CameraService> logger, MyDbContext db)
     {
-        public async Task<List<FolderUserResponseDTO>?> GetFolderUsers(uint organizationId, uint folderId)
+        public async Task<List<FolderUserResponseDTO>?> GetFolderUsers(int organizationId, int folderId)
         {
             try
             {
@@ -20,7 +20,6 @@ namespace BackEnd.Organizations.Services
 
                 var users = await query.Select(uf => new FolderUserResponseDTO
                 {
-                    Id = uf.Id,
                     FolderId = uf.FolderId,
                     UserId = uf.UserId,
                     CanView = uf.CanView,
@@ -35,7 +34,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<FolderUserResponseDTO?> GetFolderUser(uint organizationId, uint folderId, uint userId)
+        public async Task<FolderUserResponseDTO?> GetFolderUser(int organizationId, int folderId, int userId)
         {
             try
             {
@@ -45,7 +44,6 @@ namespace BackEnd.Organizations.Services
 
                 var user = await query.Select(uf => new FolderUserResponseDTO
                 {
-                    Id = uf.Id,
                     FolderId = uf.FolderId,
                     UserId = uf.UserId,
                     CanView = uf.CanView,
@@ -60,7 +58,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<FolderUserResponseDTO?> ChangeFolderUser(FolderUserRequestDTO dto, uint organizationId, uint folderId, uint userId)
+        public async Task<FolderUserResponseDTO?> ChangeFolderUser(FolderUserRequestDTO dto, int organizationId, int folderId, int userId)
         {
             try
             {
@@ -74,8 +72,8 @@ namespace BackEnd.Organizations.Services
                 {
                     user = new DB.Entities.M2mUsersFoldersEntity
                     {
-                        FolderId = folderId,
-                        UserId = userId,
+                        FolderId = (uint)folderId,
+                        UserId = (uint)userId,
                         CanView = dto.CanView,
                     };
 
@@ -90,7 +88,6 @@ namespace BackEnd.Organizations.Services
 
                 var res = await query.Select(uf => new FolderUserResponseDTO
                 {
-                    Id = uf.Id,
                     FolderId = uf.FolderId,
                     UserId = uf.UserId,
                     CanView = uf.CanView,
@@ -105,7 +102,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<bool?> DeleteFolderUser(uint organizationId, uint folderId, uint userId)
+        public async Task<bool?> DeleteFolderUser(int organizationId, int folderId, int userId)
         {
             try
             {

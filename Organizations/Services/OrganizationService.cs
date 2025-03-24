@@ -106,7 +106,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<OrganizationResponseDTO?> GetOrganization(uint organizationId)
+        public async Task<OrganizationResponseDTO?> GetOrganization(int organizationId)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<OrganizationResponseDTO?> ChangeOrganization(OrganizationRequestDTO dto, uint organizationId)
+        public async Task<OrganizationResponseDTO?> ChangeOrganization(OrganizationRequestDTO dto, int organizationId)
         {
             try
             {
@@ -220,7 +220,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<bool?> DeleteOrganization(uint organizationId)
+        public async Task<bool?> DeleteOrganization(int organizationId)
         {
             try
             {

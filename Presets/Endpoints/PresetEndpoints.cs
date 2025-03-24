@@ -14,13 +14,13 @@ namespace BackEnd.Presets.Endpoints
         {
             builder.MapGet("/", GetPresets)
                 .WithOpenApi();
-            builder.MapGet("/{presetId:uint}", GetPreset)
+            builder.MapGet("/{presetId:int}", GetPreset)
                 .WithOpenApi();
             builder.MapPost("/", CreatePresets)
                 .WithOpenApi();
-            builder.MapPut("/{presetId:uint}", ChangePreset)
+            builder.MapPut("/{presetId:int}", ChangePreset)
                 .WithOpenApi();
-            builder.MapDelete("/{presetId:uint}", DeletePreset)
+            builder.MapDelete("/{presetId:int}", DeletePreset)
                 .WithOpenApi();
         }
 
@@ -33,7 +33,7 @@ namespace BackEnd.Presets.Endpoints
         }
 
         [Authorize]
-        private static async Task<IResult> GetPreset([FromServices] PresetService service, uint presetId)
+        private static async Task<IResult> GetPreset([FromServices] PresetService service, int presetId)
         {
             var preset = await service.GetPreset(presetId);
 
@@ -41,15 +41,15 @@ namespace BackEnd.Presets.Endpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> CreatePresets([FromServices] PresetService service, [FromBody] PresetRequestDTO dto, uint presetId)
+        private static async Task<IResult> CreatePresets([FromServices] PresetService service, [FromBody] PresetRequestDTO dto)
         {
-            var preset = await service.CreatePresets(dto);
+            var preset = await service.CreatePreset(dto);
 
             return preset is null ? Results.StatusCode(StatusCodes.Status500InternalServerError) : Results.Ok(preset);
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> ChangePreset([FromServices] PresetService service, [FromBody] PresetRequestDTO dto, uint presetId)
+        private static async Task<IResult> ChangePreset([FromServices] PresetService service, [FromBody] PresetRequestDTO dto, int presetId)
         {
             var preset = await service.ChangePreset(dto, presetId);
 
@@ -57,7 +57,7 @@ namespace BackEnd.Presets.Endpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> DeletePreset([FromServices] PresetService service, uint presetId)
+        private static async Task<IResult> DeletePreset([FromServices] PresetService service, int presetId)
         {
             var res = await service.DeletePreset(presetId);
 

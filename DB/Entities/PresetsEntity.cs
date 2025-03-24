@@ -6,9 +6,6 @@
 
         public string Title { get; set; } = null!;
 
-        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
-
-
         public float DVRDepth { get; set; }
 
         public uint DVRLockDays { get; set; }
@@ -21,9 +18,9 @@
 
         public uint PreciseTrumbnailsDays { get; set; }
 
-
         public bool IsDeleted { get; set; }
 
+        public virtual ICollection<CamerasEntity>? Cameras { get; set; } = new List<CamerasEntity>();
 
         //public string? VisionAlg { get; set; }
 

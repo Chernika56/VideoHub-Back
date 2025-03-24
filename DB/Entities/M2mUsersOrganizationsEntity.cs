@@ -2,16 +2,11 @@
 {
     public class M2mUsersOrganizationsEntity
     {
-        public uint Id { get; set; }
-
         public uint UserId { get; set; }
-
-        public uint OrganizationId { get; set; }
-
         public virtual UsersEntity User { get; set; } = null!;
 
+        public uint OrganizationId { get; set; }
         public virtual OrganizationsEntity Organization { get; set; } = null!;
-
 
         // permissions
         public bool IsMember { get; set; } // default = false

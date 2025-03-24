@@ -14,13 +14,13 @@ namespace BackEnd.Users.Endpoints
         {
             builder.MapGet("/", GetUsers)
                 .WithOpenApi();
-            builder.MapGet("/{userId:uint}", GetUser)
+            builder.MapGet("/{userId:int}", GetUser)
                 .WithOpenApi();
             builder.MapPost("/", CreateUser)
                 .WithOpenApi();
-            builder.MapPut("/{userId:uint}", ChangeUser)
+            builder.MapPut("/{userId:int}", ChangeUser)
                 .WithOpenApi();
-            builder.MapDelete("/{userId:uint}", DeleteUser)
+            builder.MapDelete("/{userId:int}", DeleteUser)
                 .WithOpenApi();
         }
 
@@ -33,7 +33,7 @@ namespace BackEnd.Users.Endpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> GetUser([FromServices] UserService service, uint userId)
+        private static async Task<IResult> GetUser([FromServices] UserService service, int userId)
         {
             var user = await service.GetUser(userId);
 
@@ -49,7 +49,7 @@ namespace BackEnd.Users.Endpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> ChangeUser([FromServices] UserService service, [FromBody] UserRequestDTO dto, uint userId)
+        private static async Task<IResult> ChangeUser([FromServices] UserService service, [FromBody] UserRequestDTO dto, int userId)
         {
             var user = await service.ChangeUser(dto, userId);
 
@@ -57,7 +57,7 @@ namespace BackEnd.Users.Endpoints
         }
 
         [Authorize(Policy = PolicyType.OrganizationAdminPolicy)]
-        private static async Task<IResult> DeleteUser([FromServices] UserService service, uint userId)
+        private static async Task<IResult> DeleteUser([FromServices] UserService service, int userId)
         {
             var res = await service.DeleteUser(userId);
 

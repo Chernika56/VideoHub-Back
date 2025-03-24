@@ -10,7 +10,7 @@ namespace BackEnd.Organizations.Services
 {
     public class OrganizationUsersService(ILogger<CameraService> logger, MyDbContext db)
     {
-        public async Task<List<OrganizationUserResponseDTO>?> GetOrganizationUsers(uint organizationId)
+        public async Task<List<OrganizationUserResponseDTO>?> GetOrganizationUsers(int organizationId)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<OrganizationUserResponseDTO?> GetOrganizationUser(uint organizationId, uint userId)
+        public async Task<OrganizationUserResponseDTO?> GetOrganizationUser(int organizationId, int userId)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<OrganizationUserResponseDTO?> ChangeOrganizationUser(OrganizationUserRequestDTO dto, uint organizationId, uint userId)
+        public async Task<OrganizationUserResponseDTO?> ChangeOrganizationUser(OrganizationUserRequestDTO dto, int organizationId, int userId)
         {
             try
             {
@@ -121,8 +121,8 @@ namespace BackEnd.Organizations.Services
                 {
                     user = new M2mUsersOrganizationsEntity
                     {
-                        UserId = userId,
-                        OrganizationId = organizationId,
+                        UserId = (uint)userId,
+                        OrganizationId = (uint)organizationId,
                         IsAdmin = dto.IsAdmin ?? false,
                         IsMember = dto.IsMember ?? false,
                     };
@@ -149,7 +149,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<bool?> DeleteUserFromOrganization(uint organizationId, uint userId)
+        public async Task<bool?> DeleteUserFromOrganization(int organizationId, int userId)
         {
             try
             {

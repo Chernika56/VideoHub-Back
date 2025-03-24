@@ -9,7 +9,7 @@ namespace BackEnd.Organizations.Services
 {
     public class OrganizationFoldersService(ILogger<CameraService> logger, MyDbContext db)
     {
-        public async Task<List<OrganizationFolderResponseDTO>?> GetOrganizationFolders(uint organizationId)
+        public async Task<List<OrganizationFolderResponseDTO>?> GetOrganizationFolders(int organizationId)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<OrganizationFolderResponseDTO?> CreateOrganizationFolder(OrganizationFolderRequestDTO dto, uint organizationId)
+        public async Task<OrganizationFolderResponseDTO?> CreateOrganizationFolder(OrganizationFolderRequestDTO dto, int organizationId)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<OrganizationFolderResponseDTO?> GetOrganizationFolder(uint organizationId, uint folderId)
+        public async Task<OrganizationFolderResponseDTO?> GetOrganizationFolder(int organizationId, int folderId)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<OrganizationFolderResponseDTO?> ChangeOrganizationFolder(OrganizationFolderRequestDTO dto, uint organizationId, uint folderId)
+        public async Task<OrganizationFolderResponseDTO?> ChangeOrganizationFolder(OrganizationFolderRequestDTO dto, int organizationId, int folderId)
         {
             try
             {
@@ -220,7 +220,7 @@ namespace BackEnd.Organizations.Services
             }
         }
 
-        public async Task<bool?> DeleteFolder(uint organizationId, uint folderId)
+        public async Task<bool?> DeleteFolder(int organizationId, int folderId)
         {
             try
             {

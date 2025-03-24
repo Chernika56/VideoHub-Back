@@ -53,7 +53,7 @@ namespace BackEnd.Users.Services
             }
         }
 
-        public async Task<UserResponseDTO?> GetUser(uint userId)
+        public async Task<UserResponseDTO?> GetUser(int userId)
         {
             try
             {
@@ -119,6 +119,8 @@ namespace BackEnd.Users.Services
                     Disabled = dto.Disabled,
                     AccessLevel = dto.AccessLevel,
                     IsLoggedIn = false,
+
+                    Token = $"thisIsPersonalUserToken{dto.Login}",
                 };
 
                 db.Users.Add(user);
@@ -159,7 +161,7 @@ namespace BackEnd.Users.Services
 
                 await db.SaveChangesAsync();
 
-                return await GetUser(user.Id);
+                return await GetUser((int)user.Id);
             }
             catch (Exception ex)
             {
@@ -168,7 +170,7 @@ namespace BackEnd.Users.Services
             }
         }
 
-        public async Task<UserResponseDTO?> ChangeUser(UserRequestDTO dto, uint userId)
+        public async Task<UserResponseDTO?> ChangeUser(UserRequestDTO dto, int userId)
         {
             try
             {
@@ -271,7 +273,7 @@ namespace BackEnd.Users.Services
             }
         }
 
-        public async Task<bool?> DeleteUser(uint userId)
+        public async Task<bool?> DeleteUser(int userId)
         {
             try
             {

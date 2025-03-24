@@ -2,9 +2,9 @@
 
 namespace BackEnd.Cameras.DTO.ResponseDTO
 {
-    public class    CameraResponseDTO
+    public class CameraResponseDTO
     {
-        public uint Id { get; set; }
+        public string Name { get; set; } = null!;
 
         // public AgentsDTO? Agents { get; set; }
 
@@ -35,8 +35,6 @@ namespace BackEnd.Cameras.DTO.ResponseDTO
         public long? LastEventTime { get; set; }
 
         public bool? MotionDetectorEnabled { get; set; }
-
-        public string Name { get; set; } = null!;
 
         public string? OnvifProfile { get; set; }
 

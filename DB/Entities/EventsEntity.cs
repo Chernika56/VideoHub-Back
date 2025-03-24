@@ -4,10 +4,8 @@
     {
         public uint Id { get; set; }
 
-        public uint CameraId { get; set; }
-
+        public string CameraName { get; set; } = null!;
         public virtual CamerasEntity Camera { get; set; } = null!;
-
 
         public string Source { get; set; } = null!;
 
@@ -19,7 +17,6 @@
 
         public DateTimeOffset EndAt { get; set; }
 
-        
         //public string SourceId { get; set; }
 
         //public string? ObjectClass { get; set; }

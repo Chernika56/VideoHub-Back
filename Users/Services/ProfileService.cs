@@ -129,7 +129,7 @@ namespace BackEnd.Users.Services
             }
         }
 
-        public async Task<List<MyFoldersResponseDTO>?> GetMyFoldersInOrganization(uint organization_Id)
+        public async Task<List<MyFoldersResponseDTO>?> GetMyFoldersInOrganization(int organization_Id)
         {
             try
             {

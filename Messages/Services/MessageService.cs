@@ -47,7 +47,7 @@ namespace BackEnd.Messages.Services
             }
         }
 
-        public async Task<MessageResponseDTO?> GetMessage(uint messageId)
+        public async Task<MessageResponseDTO?> GetMessage(int messageId)
         {
             try
             {
@@ -104,8 +104,8 @@ namespace BackEnd.Messages.Services
                     Title = dto.Title,
                     Body = dto.Body,
                     Type = dto.Type,
-                    IsPush = dto.IsPush,
-                    IsDashboard = dto.IsDashboard,
+                    IsPush = dto.IsPush ?? false,
+                    IsDashboard = dto.IsDashboard ?? false,
                     IsDeleted = false,
                     WasRead = false,
                 };
@@ -113,7 +113,7 @@ namespace BackEnd.Messages.Services
                 db.Messages.Add(message);
                 await db.SaveChangesAsync();
 
-                return await GetMessage(message.Id);
+                return await GetMessage((int)message.Id);
             }
             catch (Exception ex)
             {
@@ -122,7 +122,7 @@ namespace BackEnd.Messages.Services
             }
         }
 
-        public async Task<bool?> DeleteMessage(uint messageId)
+        public async Task<bool?> DeleteMessage(int messageId)
         {
             try
             {

@@ -37,7 +37,7 @@ namespace BackEnd.Presets.Services
             }
         }
 
-        public async Task<PresetResponseDTO?> GetPreset(uint presetId)
+        public async Task<PresetResponseDTO?> GetPreset(int presetId)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace BackEnd.Presets.Services
             }
         }
 
-        public async Task<PresetResponseDTO?> ChangePreset(PresetRequestDTO dto, uint presetId)
+        public async Task<PresetResponseDTO?> ChangePreset(PresetRequestDTO dto, int presetId)
         {
             try
             {
@@ -176,7 +176,7 @@ namespace BackEnd.Presets.Services
             }
         }
 
-        public async Task<bool?> DeletePreset(uint presetId)
+        public async Task<bool?> DeletePreset(int presetId)
         {
             try
             {
