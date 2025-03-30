@@ -3,9 +3,11 @@ using BackEnd.Cameras.DTO.RequestDTO;
 using BackEnd.Cameras.DTO.ResponseDTO;
 using BackEnd.DB.Context;
 using BackEnd.DB.Entities;
+using BackEnd.Messages.DTO;
 using BackEnd.Presets.DTO.ResponseDTO;
 using BackEnd.ServerServices;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BackEnd.Cameras.Services
 {
@@ -133,7 +135,7 @@ namespace BackEnd.Cameras.Services
                         url = "auth://vsaas"
                     },
                     prerush = 1,
-                    disabled = false,
+                    disabled = !dto.Enabled,
                 };
 
                 var response = await streamerService.UpdateStreamAsync(cameraName, data);
@@ -163,6 +165,7 @@ namespace BackEnd.Cameras.Services
                     if (dto.DVRLockDays.HasValue) camera.DVRLockDays = dto.DVRLockDays.Value;
                     if (dto.DVRPath != null) camera.DVRPath = dto.DVRPath;
                     if (dto.DVRSpace.HasValue) camera.DVRSpace = dto.DVRSpace.Value;
+                    if (dto.Enabled != null) camera.Enabled = dto.Enabled.Value;
                     if (dto.MotionDetectorEnabled.HasValue) camera.MotionDetectorEnabled = dto.MotionDetectorEnabled.Value;
                     if (dto.OnvifProfile != null) camera.OnvifProfile = dto.OnvifProfile;
                     if (dto.OnvifPTZ != null) camera.OnvifPTZ = dto.OnvifPTZ;
@@ -248,7 +251,7 @@ namespace BackEnd.Cameras.Services
                         StreamerId = dto.StreamerId ?? 0,
                         FolderId = dto.FolderId ?? 0,
 
-                        Enabled = true,
+                        Enabled = dto.Enabled!.Value,
                         LastEventTime = DateTimeOffset.UtcNow,
                     };
 

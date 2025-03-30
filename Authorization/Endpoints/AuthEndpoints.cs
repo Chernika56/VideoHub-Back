@@ -11,6 +11,10 @@ namespace BackEnd.Authorization.Endpoints
         {
             builder.MapPost("/login", UserAuthentication)
                 .WithOpenApi();
+            builder.MapPost("/logout", UserLogout)
+                .WithOpenApi();
+            builder.MapGet("/whoami", WhoAmI)
+                .WithOpenApi();
         }
 
         private async static Task<IResult> UserAuthentication(HttpContext context, [FromServices] AuthService service, [FromBody] AuthenticationDTO dto)
@@ -31,6 +35,27 @@ namespace BackEnd.Authorization.Endpoints
             {
                 return Results.BadRequest();
             }
+        }
+
+        [Authorize]
+        private static IResult UserLogout(HttpContext context)
+        {
+            context.Response.Cookies.Delete("jwtToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+
+            return Results.Ok(new { message = "Successfully logged out" });
+        }
+
+        [Authorize]
+        private async static Task<IResult> WhoAmI([FromServices] AuthService service)
+        {
+            var profile = await service.WhoAmI();
+
+            return profile is null ? Results.StatusCode(StatusCodes.Status500InternalServerError) : Results.Ok(profile);
         }
     }
 }

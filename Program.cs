@@ -14,6 +14,8 @@ using BackEnd.Organizations.Services;
 using BackEnd.Presets.Endpoints;
 using BackEnd.Presets.Services;
 using BackEnd.ServerServices;
+using BackEnd.Streamers.Endpoints;
+using BackEnd.Streamers.Services;
 using BackEnd.Users.Endpoints;
 using BackEnd.Users.Services;
 using BackEnd.Utils.Policies;
@@ -25,24 +27,33 @@ using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appparams.json");
+//builder.Configuration.AddJsonFile("appparams.json");
+builder.Configuration.AddJsonFile("appsettings.json");
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowNuxt", builder =>
+//        builder.WithOrigins("http://localhost:3000")
+//            .AllowCredentials()
+//            .AllowAnyHeader()
+//            .AllowAnyMethod());
+//});
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowNuxt", builder =>
-        builder.WithOrigins("http://localhost:3000")
-            .AllowCredentials()
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    options.AddPolicy("AllowAll", policy =>
+        policy.SetIsOriginAllowed(_ => true)
+            .AllowCredentials()             
+            .AllowAnyHeader()               
+            .AllowAnyMethod());              
 });
 
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddHttpClient<IStreamerService, StreamerService>(client =>
+builder.Services.AddHttpClient<IStreamerService, BackEnd.ServerServices.StreamerService>(client =>
 {
     string username = builder.Configuration["Streamer:Login"]!;
     string password = builder.Configuration["Streamer:Password"]!;
@@ -142,6 +153,7 @@ builder.Services.AddScoped<OrganizationFoldersService>();
 builder.Services.AddScoped<OrganizationFolderUserService>();
 builder.Services.AddScoped<FolderService>();
 builder.Services.AddScoped<MessageService>();
+builder.Services.AddScoped<BackEnd.Streamers.Services.StreamerService>();
 
 var app = builder.Build();
 
@@ -166,6 +178,7 @@ globalGroup.MapGroup(@"/mosaics").MapMosaics();
 globalGroup.MapGroup(@"/presets").MapPresets();
 globalGroup.MapGroup(@"/folders").MapFolders();
 globalGroup.MapGroup(@"/messages").MapMessages();
+globalGroup.MapGroup(@"/streamers").MapStreamers();
 
 var organizationsGroup = globalGroup.MapGroup("/organizations");
 organizationsGroup.MapOrganizations();

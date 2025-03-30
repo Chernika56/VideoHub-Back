@@ -20,7 +20,7 @@
 
         public uint? DVRSpace { get; set; } // (Пространство DVR) ГБ // первично из presets потом может изменится
 
-        // public bool? Enabled { get; set; }
+        public bool? Enabled { get; set; }
 
         // public string? FolderCoordinates { get; set; } // из folders
 
@@ -64,7 +64,7 @@
 
         public string? SubStreamUrl { get; set; }
 
-        // public bool? Thumbnails { get; set; }
+        // public uint? Thumbnails { get; set; }
 
         // public string? ThumbnailsUrl { get; set; }
 

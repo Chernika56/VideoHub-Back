@@ -95,7 +95,7 @@ namespace BackEnd.Cameras.DTO.ResponseDTO
 
         public bool? DVR { get; set; }
 
-        public uint DVRDepthLimit { get; set; }
+        public uint? DVRDepthLimit { get; set; }
 
         public bool? Actions { get; set; }
     }

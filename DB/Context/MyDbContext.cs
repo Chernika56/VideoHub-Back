@@ -37,14 +37,12 @@ namespace BackEnd.DB.Context
     {
         public MyDbContext()
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -215,7 +213,8 @@ namespace BackEnd.DB.Context
                     Title = "Default",
                     UserCount = 1,
                     IsDefault = true,
-                    OwnerId = 1
+                    OwnerId = 1,
+                    CameraCount = 0
                 });
             });
 
@@ -328,6 +327,7 @@ namespace BackEnd.DB.Context
                     Title = "Default",
                     OrganizationId = 1,
                     HierarchyLevel = 0,
+                    CameraCount = 0,
                 });
             });
 
@@ -464,9 +464,7 @@ namespace BackEnd.DB.Context
                     .HasColumnName("cam_dvr");
 
                 entity.Property(c => c.DVRDepthLimit)
-                    .HasColumnName("cam_dvrDepthLimit")
-                    .HasDefaultValue(0)
-                    .IsRequired();
+                    .HasColumnName("cam_dvrDepthLimit");
 
                 entity.Property(c => c.Actions)
                     .HasColumnName("cam_actions");
@@ -503,6 +501,38 @@ namespace BackEnd.DB.Context
                     .HasForeignKey(c => c.StreamerId)
                     .OnDelete(DeleteBehavior.Restrict);
                 //.HasConstraintName("fk_Cameras_strm");
+
+                // Default Data
+                //entity.HasData(new CamerasEntity
+                //{
+                //    Name = "Cam_ATS-327",
+                //    Comment = "comment1",
+                //    Coordinates = "57 55",
+                //    DVRDepth = 1,
+                //    DVRLockDays = 1,
+                //    DVRPath = "dvr",
+                //    DVRSpace = 1,
+                //    Enabled = true,
+                //    FolderId = 1,
+                //    LastEventTime = DateTimeOffset.Now,
+                //    MotionDetectorEnabled = true,
+                //    OnvifProfile = "media_profile1",
+                //    OnvifPTZ = true,
+                //    OnvifURL = "http://admin:321678!Qw@172.16.0.239",
+                //    OrganizationId = 1,
+                //    View = true,
+                //    Edit = true,
+                //    PTZ = true,
+                //    DVR = true,
+                //    DVRDepthLimit = 1,
+                //    Actions = true,
+                //    PostalAddress = "ул. Калатушкина",
+                //    PresetId = 1,
+                //    StreamUrl = "rtsp://admin:321678!Qw@172.16.0.239:554/media/video1",
+                //    StreamerId = 1,
+                //    SubStreamUrl = "",
+                //    Title = "Cam_ATS-327",
+                //});
             });
 
             modelBuilder.Entity<PresetsEntity>(entity =>
@@ -558,6 +588,8 @@ namespace BackEnd.DB.Context
                     .IsRequired();
 
                 // Foreign Key
+
+                // Default Data
                 entity.HasData(new PresetsEntity
                 {
                     Id = 1,
@@ -667,10 +699,10 @@ namespace BackEnd.DB.Context
                 entity.HasData(new StreamersEntity
                 {
                     Id = 1,
-                    HostName = "host",
-                    ApiUrl = "url",
+                    HostName = "flussonic",
+                    ApiUrl = "https://172.16.0.48",
                     Port = 80,
-                    IsLocal = true,
+                    IsLocal = false,
                     DVRPath = "dvr"
                 });
             });

@@ -15,11 +15,6 @@ namespace BackEnd.Users.DTO.ResponseDTO
 
         public string? Email { get; set; }
 
-        // public string? ApiKey { get; set; } // ????
-
-        // public string? Session { get; set; } // ????
-
-
         public string? Phone { get; set; }
 
         public string? Note { get; set; }

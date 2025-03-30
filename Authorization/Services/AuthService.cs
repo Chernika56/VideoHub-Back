@@ -1,6 +1,7 @@
 ﻿using BackEnd.Authorization.DTO;
 using BackEnd.DB.Context;
 using BackEnd.DB.Entities;
+using BackEnd.Users.DTO.ResponseDTO;
 using BackEnd.Users.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +13,7 @@ using System.Text;
 
 namespace BackEnd.Authorization.Services
 {
-    public class AuthService(ILogger<UserService> logger, MyDbContext db, IConfiguration config)
+    public class AuthService(ILogger<UserService> logger, MyDbContext db, IConfiguration config, AuthHelper authHelper)
     {
         public async Task<string?> AuthenticationUser(AuthenticationDTO dto)
         {
@@ -29,6 +30,49 @@ namespace BackEnd.Authorization.Services
             catch (Exception ex)
             {
                 logger.LogError("Error has occured in user Authentication: {exception}", ex);
+                return null;
+            }
+        }
+
+        public async Task<WhoAmIDTO?> WhoAmI()
+        {
+            try
+            {
+                var user = await db.Users
+                    .Include(u => u.M2mUsersOrganizations)
+                    .Include(u => u.M2mUsersFolders)
+                    .Where(u => u.Login == authHelper.GetCurrentUserLogin())
+                    .Select(u => new WhoAmIDTO
+                    {
+                        Id = u.Id,
+                        Login = u.Login,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Phone = u.Phone,
+                        Note = u.Note,
+                        MaxSessions = u.MaxSessions,
+                        Disabled = u.Disabled,
+                        AccessLevel = u.AccessLevel,
+                        IsLoggedIn = u.IsLoggedIn,
+                        Organizations = u.M2mUsersOrganizations != null ? u.M2mUsersOrganizations.Select(uo => new Users.DTO.ResponseDTO.Organizations
+                        {
+                            Id = uo.OrganizationId,
+                            // Title = db.Organizations.Find(uo.OrganizationId).Title,
+                            IsMember = uo.IsMember,
+                            IsAdmin = uo.IsAdmin,
+                        }).ToList() : null,
+                        Folders = u.M2mUsersFolders != null ? u.M2mUsersFolders.Select(uf => new Users.DTO.ResponseDTO.Folders
+                        {
+                            Id = uf.FolderId,
+                            CanView = uf.CanView,
+                        }).ToList() : null,
+                    }).FirstOrDefaultAsync();
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Exceptions occured during organization finding {exception}", ex);
                 return null;
             }
         }
