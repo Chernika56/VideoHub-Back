@@ -3,34 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 
-//{
-//    "comment": "comment1",
-//  "coordinates": "57 55",
-//  "dvrDepth": 1,
-//  "dvrLockDays": 1,
-//  "dvrPath": "dvr",
-//  "dvrSpace": 1,
-//  "folderId": 1,
-//  "motionDetectorEnabled": true,
-//  "onvifProfile": "media_profile1",
-//  "onvifPTZ": true,
-//  "onvifURL": "http://admin:321678!Qw@172.16.0.239",
-//  "permissions": {
-//        "view": true,
-//    "edit": true,
-//    "ptz": true,
-//    "dvr": true,
-//    "dvrDepthLimit": 1,
-//    "actions": true
-//  },
-//  "postalAddress": "ул. Калатушкина",
-//  "presetId": 1,
-//  "streamUrl": "rtsp://admin:321678!Qw@172.16.0.239:554/media/video1",
-//  "streamerId": 1,
-//  "subStreamUrl": "",
-//  "title": "Cam_ATS-327"
-//}
-
 namespace BackEnd.DB.Context
 {
     public class MyDbContext : DbContext

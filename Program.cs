@@ -15,7 +15,6 @@ using BackEnd.Presets.Endpoints;
 using BackEnd.Presets.Services;
 using BackEnd.ServerServices;
 using BackEnd.Streamers.Endpoints;
-using BackEnd.Streamers.Services;
 using BackEnd.Users.Endpoints;
 using BackEnd.Users.Services;
 using BackEnd.Utils.Policies;
@@ -30,6 +29,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appparams.json");
+builder.Configuration.AddEnvironmentVariables();
 //builder.Configuration.AddJsonFile("appsettings.json");
 
 builder.Services.AddCors(options =>
@@ -40,15 +40,6 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
-    
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowAll", policy =>
-//        policy.SetIsOriginAllowed(_ => true)
-//            .AllowCredentials()             
-//            .AllowAnyHeader()               
-//            .AllowAnyMethod());              
-//});
 
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -186,7 +177,7 @@ organizationsGroup.MapOrganizationUsers();
 organizationsGroup.MapOrganizationFolders();
 organizationsGroup.MapOrganizationFolderUsers();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.Run();
 

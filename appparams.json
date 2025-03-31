@@ -1,6 +1,6 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=fluss;Username=postgres;Password=root"
+    "DefaultConnection": "Host=postgres;Port=5432;Database=fluss;Username=postgres;Password=root1;"
   },
   "JwtParameters": {
     "Key": "SuperSecureKeyForJWTThatIsLongEnoughForHS256Encryption32bytes",
