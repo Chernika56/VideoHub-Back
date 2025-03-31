@@ -29,26 +29,26 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Configuration.AddJsonFile("appparams.json");
-builder.Configuration.AddJsonFile("appsettings.json");
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowNuxt", builder =>
-//        builder.WithOrigins("http://localhost:3000")
-//            .AllowCredentials()
-//            .AllowAnyHeader()
-//            .AllowAnyMethod());
-//});
+builder.Configuration.AddJsonFile("appparams.json");
+//builder.Configuration.AddJsonFile("appsettings.json");
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-        policy.SetIsOriginAllowed(_ => true)
-            .AllowCredentials()             
-            .AllowAnyHeader()               
-            .AllowAnyMethod());              
+    options.AddPolicy("AllowNuxt", builder =>
+        builder.WithOrigins("http://localhost:3000")
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 });
+    
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll", policy =>
+//        policy.SetIsOriginAllowed(_ => true)
+//            .AllowCredentials()             
+//            .AllowAnyHeader()               
+//            .AllowAnyMethod());              
+//});
 
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
