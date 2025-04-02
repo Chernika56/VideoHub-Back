@@ -35,7 +35,7 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowNuxt", builder =>
-        builder.WithOrigins("http://localhost", "http://172.16.0.48", "http://172.18.0.5", "http://172.18.0.1")
+        builder.WithOrigins("http://localhost")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod());
