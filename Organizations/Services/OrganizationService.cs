@@ -224,7 +224,7 @@ namespace BackEnd.Organizations.Services
         {
             try
             {
-                var organization = await db.Organizations.FindAsync(organizationId);
+                var organization = await db.Organizations.FindAsync((uint)organizationId);
                 if (organization == null)
                 {
                     return false;

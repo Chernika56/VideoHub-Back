@@ -26,8 +26,10 @@ namespace BackEnd.Authorization.Endpoints
                 context.Response.Cookies.Append("jwtToken", token, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false,
-                    SameSite = SameSiteMode.Unspecified
+                    Secure = true,
+                    SameSite = SameSiteMode.None
+                    //Secure = false,
+                    //SameSite = SameSiteMode.Unspecified
                 });
                 return Results.Ok();
             }
@@ -43,8 +45,10 @@ namespace BackEnd.Authorization.Endpoints
             context.Response.Cookies.Delete("jwtToken", new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Unspecified
+                Secure = true,
+                SameSite = SameSiteMode.None
+                //Secure = false,
+                //SameSite = SameSiteMode.Unspecified
             });
 
             return Results.Ok(new { message = "Successfully logged out" });

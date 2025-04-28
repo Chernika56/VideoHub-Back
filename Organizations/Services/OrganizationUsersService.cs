@@ -24,6 +24,7 @@ namespace BackEnd.Organizations.Services
                 {
                     Id = uo.UserId,
                     Name = uo.User.Name,
+                    Login = uo.User.Login,
                     Email = uo.User.Email,
                     Permissions = new Permissions
                     {
@@ -64,6 +65,7 @@ namespace BackEnd.Organizations.Services
                 {
                     Id = uo.UserId,
                     Name = uo.User.Name,
+                    Login = uo.User.Login,
                     Email = uo.User.Email,
                     Permissions = new Permissions
                     {
@@ -100,7 +102,7 @@ namespace BackEnd.Organizations.Services
                 {
                     if ((dto.IsMember != null) && (dto.IsMember.Value != user.IsMember))
                     {
-                        var organization = await db.Organizations.FindAsync(organizationId);
+                        var organization = await db.Organizations.FindAsync((uint)organizationId);
 
                         if (organization != null)
                             if (dto.IsMember.Value)
@@ -129,7 +131,7 @@ namespace BackEnd.Organizations.Services
 
                     if (user.IsMember)
                     {
-                        var organization = await db.Organizations.FindAsync(organizationId);
+                        var organization = await db.Organizations.FindAsync((uint)organizationId);
 
                         if (organization != null)
                             organization.UserCount += 1;
@@ -155,16 +157,13 @@ namespace BackEnd.Organizations.Services
             {
                 await db.M2mUsersOrganizations
                     .Where(uo => uo.OrganizationId == organizationId && uo.UserId == userId)
-                    .ExecuteUpdateAsync(setters => setters
-                        .SetProperty(uo => uo.IsMember, false)
-                        .SetProperty(uo => uo.IsAdmin, false)
-                    );
+                    .ExecuteDeleteAsync();
 
                 await db.M2mUsersFolders
                     .Where(uf => uf.UserId == userId && uf.Folder.OrganizationId == organizationId)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(uf => uf.CanView, false));
+                    .ExecuteDeleteAsync();
 
-                var organization = await db.Organizations.FindAsync(organizationId);
+                var organization = await db.Organizations.FindAsync((uint)organizationId);
 
                 if (organization != null)
                     organization.UserCount -= 1;

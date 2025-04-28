@@ -174,7 +174,7 @@ namespace BackEnd.Users.Services
         {
             try
             {
-                var user = await db.Users.FindAsync(userId);
+                var user = await db.Users.FindAsync((uint)userId);
 
                 if (user is null)
                 {
@@ -277,7 +277,7 @@ namespace BackEnd.Users.Services
         {
             try
             {
-                var user = await db.Users.FindAsync(userId);
+                var user = await db.Users.FindAsync((uint)userId);
 
                 if (user is null)
                 {
